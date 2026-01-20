@@ -218,22 +218,14 @@ function cleanupThreeScene() {
     isInitialized = false;
 }
 
-// Initialize when DOM is ready (only once)
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        // Small delay to ensure canvas is ready
-        setTimeout(initThreeScene, 100);
-    }, { once: true });
-} else {
-    setTimeout(initThreeScene, 100);
-}
-
 // Cleanup on page unload
 window.addEventListener('beforeunload', cleanupThreeScene);
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initThreeScene);
-} else {
-    initThreeScene();
-}
+// Initialize when window fully loads (ensures Three.js library is available)
+window.addEventListener('load', function() {
+    if (typeof THREE !== 'undefined') {
+        setTimeout(initThreeScene, 100);
+    } else {
+        console.warn('Three.js library not loaded');
+    }
+});

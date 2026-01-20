@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="<?php echo isset($basePath) ? $basePath : ''; ?>assets/css/style.css">
     <link rel="icon" type="image/x-icon" href="<?php echo isset($basePath) ? $basePath : ''; ?>favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Preload scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js" defer></script>
+    <script src="<?php echo isset($basePath) ? $basePath : ''; ?>assets/js/three-scene.js" defer></script>
+    <script src="<?php echo isset($basePath) ? $basePath : ''; ?>assets/js/script.js" defer></script>
 </head>
 <body>
     <!-- Three.js Canvas for 3D Background -->

@@ -99,34 +99,35 @@ $images = $stmt->fetchAll();
 </div>
 
 <script>
-// Make sure Bootstrap JS is loaded
-if (typeof bootstrap === 'undefined') {
-    console.error('Bootstrap JS not loaded!');
-} else {
-    document.addEventListener('DOMContentLoaded', function() {
-        const projectCarousel = document.getElementById('projectCarousel');
-        if (projectCarousel) {
-            const myCarousel = new bootstrap.Carousel(projectCarousel);
+// Wait for all scripts to load
+window.addEventListener('load', function() {
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap JS not loaded!');
+        return;
+    }
+    
+    const projectCarousel = document.getElementById('projectCarousel');
+    if (projectCarousel) {
+        const myCarousel = new bootstrap.Carousel(projectCarousel);
+        
+        // Make function globally available
+        window.goToSlide = function(index) {
+            myCarousel.to(index);
+        };
+        
+        // Optional: Highlight active thumbnail
+        myCarousel._element.addEventListener('slid.bs.carousel', function() {
+            const thumbnails = document.querySelectorAll('.img-thumbnail');
+            const activeIndex = [...this.querySelectorAll('.carousel-item')].findIndex(
+                item => item.classList.contains('active')
+            );
             
-            // Make function globally available
-            window.goToSlide = function(index) {
-                myCarousel.to(index);
-            };
-            
-            // Optional: Highlight active thumbnail
-            myCarousel._element.addEventListener('slid.bs.carousel', function() {
-                const thumbnails = document.querySelectorAll('.img-thumbnail');
-                const activeIndex = [...this.querySelectorAll('.carousel-item')].findIndex(
-                    item => item.classList.contains('active')
-                );
-                
-                thumbnails.forEach((thumb, i) => {
-                    thumb.style.border = i === activeIndex ? '3px solid #0d6efd' : '1px solid #dee2e6';
-                });
+            thumbnails.forEach((thumb, i) => {
+                thumb.style.border = i === activeIndex ? '3px solid #9d4edd' : '2px solid rgba(157, 78, 221, 0.3)';
             });
-        }
-    });
-}
+        });
+    }
+});
 </script>
 
 <?php include 'includes/footer.php'; ?>
