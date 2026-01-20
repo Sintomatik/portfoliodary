@@ -200,7 +200,14 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-}Cleanup function
+}
+
+function onMouseMove(event) {
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+}
+
+// Cleanup function
 function cleanupThreeScene() {
     if (animationId) {
         cancelAnimationFrame(animationId);
