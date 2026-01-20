@@ -1,236 +1,185 @@
-// Three.js 3D Background Scene
-let scene, camera, renderer, particles, geometricShapes = [];
-let mouseX = 0, mouseY = 0;
-let isInitialized = false;
-let animationId = null;
+(function() {
+    'use strict';
+    
+    var scene, camera, renderer, particles;
+    var geometricShapes = [];
+    var mouseX = 0, mouseY = 0;
+    var isInitialized = false;
+    var animationId = null;
 
-function initThreeScene() {
-    // Prevent multiple initializations
-    if (isInitialized) {
-        console.log('Three.js scene already initialized');
-        return;
-    }
-
-    const canvas = document.getElementById('three-canvas');
-    if (!canvas) {
-        console.warn('Three.js canvas not found');
-        return;
-    }
-
-    // Check WebGL support
-    try {
-        const testCanvas = document.createElement('canvas');
-        const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
-        if (!gl) {
-            console.warn('WebGL not supported, skipping 3D background');
-            canvas.style.display = 'none';
+    function initThreeScene() {
+        if (isInitialized) return;
+        if (typeof THREE === 'undefined') {
+            console.warn('THREE not available');
             return;
         }
-    } catch (e) {
-        console.warn('WebGL context creation failed:', e);
-        canvas.style.display = 'none';
-        return;
-    }
 
-    try {
-        // Scene setup
-        scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x1a0933, 0.002);
-
-        // Camera setup
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 50;
-
-        // Renderer setup with error handling
-        renderer = new THREE.WebGLRenderer({ 
-            canvas: canvas,
-            alpha: true,
-            antialias: true,
-            powerPreference: 'low-power',
-            failIfMajorPerformanceCaveat: false
-        });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0x6b4fd9, 0.5);
-        scene.add(ambientLight);
-
-        const pointLight1 = new THREE.PointLight(0x9d4edd, 2, 100);
-        pointLight1.position.set(20, 20, 20);
-        scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight(0x7b2cbf, 2, 100);
-        pointLight2.position.set(-20, -20, 20);
-        scene.add(pointLight2);
-
-        // Create particle system
-        createParticles();
-
-        // Create geometric shapes
-        createGeometricShapes();
-
-        // Event listeners
-        window.addEventListener('resize', onWindowResize);
-        document.addEventListener('mousemove', onMouseMove);
-
-        isInitialized = true;
-        console.log('Three.js scene initialized successfully');
-
-        // Start animation
-        animate();
-    } catch (error) {
-        console.error('Error initializing Three.js scene:', error);
-        if (canvas) {
-            canvas.style.display = 'none';
+        var canvas = document.getElementById('three-canvas');
+        if (!canvas) {
+            console.warn('Canvas not found');
+            return;
         }
-        // Create a static gradient fallback
-        document.body.style.background = 'linear-gradient(135deg, #0a0020 0%, #1a0933 25%, #2d0a5e 50%, #1a0933 75%, #0a0020 100%)';
+
+        try {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x1a0933, 0.002);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 50;
+
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas,
+                alpha: true,
+                antialias: true,
+                powerPreference: 'low-power'
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            var ambientLight = new THREE.AmbientLight(0x6b4fd9, 0.5);
+            scene.add(ambientLight);
+
+            var pointLight1 = new THREE.PointLight(0x9d4edd, 2, 100);
+            pointLight1.position.set(20, 20, 20);
+            scene.add(pointLight1);
+
+            var pointLight2 = new THREE.PointLight(0x7b2cbf, 2, 100);
+            pointLight2.position.set(-20, -20, 20);
+            scene.add(pointLight2);
+
+            createParticles();
+            createGeometricShapes();
+
+            window.addEventListener('resize', onWindowResize);
+            document.addEventListener('mousemove', onMouseMove);
+
+            isInitialized = true;
+            animate();
+        } catch (error) {
+            console.error('Three.js init error:', error);
+            if (canvas) canvas.style.display = 'none';
+        }
     }
-}
 
-function createParticles() {
-    const particleCount = 800;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
+    function createParticles() {
+        var particleCount = 800;
+        var geometry = new THREE.BufferGeometry();
+        var positions = new Float32Array(particleCount * 3);
+        var colors = new Float32Array(particleCount * 3);
 
-    const purpleColors = [
-        new THREE.Color(0x9d4edd),
-        new THREE.Color(0x7b2cbf),
-        new THREE.Color(0x5a189a),
-        new THREE.Color(0x3c096c)
-    ];
+        var purpleColors = [
+            new THREE.Color(0x9d4edd),
+            new THREE.Color(0x7b2cbf),
+            new THREE.Color(0x5a189a),
+            new THREE.Color(0x3c096c)
+        ];
 
-    for (let i = 0; i < particleCount * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 200;
-        positions[i + 1] = (Math.random() - 0.5) * 200;
-        positions[i + 2] = (Math.random() - 0.5) * 200;
+        for (var i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 200;
+            positions[i + 1] = (Math.random() - 0.5) * 200;
+            positions[i + 2] = (Math.random() - 0.5) * 200;
 
-        const color = purpleColors[Math.floor(Math.random() * purpleColors.length)];
-        colors[i] = color.r;
-        colors[i + 1] = color.g;
-        colors[i + 2] = color.b;
-    }
+            var color = purpleColors[Math.floor(Math.random() * purpleColors.length)];
+            colors[i] = color.r;
+            colors[i + 1] = color.g;
+            colors[i + 2] = color.b;
+        }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    const material = new THREE.PointsMaterial({
-        size: 0.5,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.8,
-        blending: THREE.AdditiveBlending
-    });
-
-    particles = new THREE.Points(geometry, material);
-    scene.add(particles);
-}
-
-function createGeometricShapes() {
-    const geometries = [
-        new THREE.TetrahedronGeometry(2),
-        new THREE.OctahedronGeometry(2),
-        new THREE.IcosahedronGeometry(2),
-        new THREE.TorusGeometry(2, 0.5, 16, 100),
-        new THREE.TorusKnotGeometry(1.5, 0.4, 100, 16)
-    ];
-
-    for (let i = 0; i < 8; i++) {
-        const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-        const material = new THREE.MeshPhongMaterial({
-            color: Math.random() > 0.5 ? 0x9d4edd : 0x7b2cbf,
+        var material = new THREE.PointsMaterial({
+            size: 0.5,
+            vertexColors: true,
             transparent: true,
-            opacity: 0.3,
-            wireframe: Math.random() > 0.5
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
         });
 
-        const mesh = new THREE.Mesh(geometry, material);
-        
-        mesh.position.x = (Math.random() - 0.5) * 100;
-        mesh.position.y = (Math.random() - 0.5) * 100;
-        mesh.position.z = (Math.random() - 0.5) * 100;
-        
-        mesh.rotation.x = Math.random() * Math.PI;
-        mesh.rotation.y = Math.random() * Math.PI;
-        
-        mesh.userData.rotationSpeed = {
-            x: (Math.random() - 0.5) * 0.02,
-            y: (Math.random() - 0.5) * 0.02
-        };
-
-        geometricShapes.push(mesh);
-        scene.add(mesh);
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
     }
-}
 
-function animate() {
-    if (!isInitialized || !renderer) return;
+    function createGeometricShapes() {
+        var geometries = [
+            new THREE.TetrahedronGeometry(2),
+            new THREE.OctahedronGeometry(2),
+            new THREE.IcosahedronGeometry(2),
+            new THREE.TorusGeometry(2, 0.5, 16, 100),
+            new THREE.TorusKnotGeometry(1.5, 0.4, 100, 16)
+        ];
 
-    animationId = requestAnimationFrame(animate);
+        for (var i = 0; i < 8; i++) {
+            var geometry = geometries[Math.floor(Math.random() * geometries.length)];
+            var material = new THREE.MeshPhongMaterial({
+                color: Math.random() > 0.5 ? 0x9d4edd : 0x7b2cbf,
+                transparent: true,
+                opacity: 0.3,
+                wireframe: Math.random() > 0.5
+            });
 
-    try {
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = (Math.random() - 0.5) * 100;
+            mesh.position.y = (Math.random() - 0.5) * 100;
+            mesh.position.z = (Math.random() - 0.5) * 100;
+            mesh.rotation.x = Math.random() * Math.PI;
+            mesh.rotation.y = Math.random() * Math.PI;
+            mesh.userData.rotationSpeed = {
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02
+            };
+
+            geometricShapes.push(mesh);
+            scene.add(mesh);
+        }
+    }
+
+    function animate() {
+        if (!isInitialized || !renderer) return;
+        animationId = requestAnimationFrame(animate);
+
         if (particles) {
             particles.rotation.y += 0.0005;
             particles.rotation.x += 0.0002;
         }
 
-        geometricShapes.forEach(function(shape) {
-            shape.rotation.x += shape.userData.rotationSpeed.x;
-            shape.rotation.y += shape.userData.rotationSpeed.y;
-        });
+        for (var i = 0; i < geometricShapes.length; i++) {
+            geometricShapes[i].rotation.x += geometricShapes[i].userData.rotationSpeed.x;
+            geometricShapes[i].rotation.y += geometricShapes[i].userData.rotationSpeed.y;
+        }
 
         camera.position.x += (mouseX * 0.05 - camera.position.x) * 0.05;
         camera.position.y += (-mouseY * 0.05 - camera.position.y) * 0.05;
         camera.lookAt(scene.position);
 
         renderer.render(scene, camera);
-    } catch (error) {
-        console.error('Animation error:', error);
-        cancelAnimationFrame(animationId);
     }
-}
 
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function onMouseMove(event) {
-    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-    mouseY = (event.clientY / window.innerHeight) * 2 - 1;
-}
-
-function cleanupThreeScene() {
-    if (animationId) {
-        cancelAnimationFrame(animationId);
+    function onWindowResize() {
+        if (!camera || !renderer) return;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
     }
-    if (renderer) {
-        renderer.dispose();
+
+    function onMouseMove(event) {
+        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseY = (event.clientY / window.innerHeight) * 2 - 1;
     }
-    isInitialized = false;
-}
 
-// Cleanup on page unload
-window.addEventListener('beforeunload', cleanupThreeScene);
+    function tryInit() {
+        if (typeof THREE !== 'undefined') {
+            initThreeScene();
+        } else {
+            setTimeout(tryInit, 200);
+        }
+    }
 
-// Initialize Three.js scene
-function tryInitThreeScene() {
-    if (typeof THREE !== 'undefined') {
-        initThreeScene();
+    if (document.readyState === 'complete') {
+        setTimeout(tryInit, 100);
     } else {
-        console.warn('Three.js library not loaded, retrying...');
-        setTimeout(tryInitThreeScene, 200);
+        window.addEventListener('load', function() {
+            setTimeout(tryInit, 100);
+        });
     }
-}
-
-// Wait for document to be ready, then initialize
-if (document.readyState === 'complete') {
-    setTimeout(tryInitThreeScene, 100);
-} else {
-    window.addEventListener('load', function() {
-        setTimeout(tryInitThreeScene, 100);
-    });
-}
+})();
