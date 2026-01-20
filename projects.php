@@ -17,7 +17,7 @@ include 'includes/db.php';
         $imgStmt->execute([$project['id']]);
         $images = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
         
-        echo '<div class="flip-card card-3d-target">';
+        echo '<div class="flip-card">';
         echo '  <div class="flip-card-inner">';
         
         // Front - Carousel
