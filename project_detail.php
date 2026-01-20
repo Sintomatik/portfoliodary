@@ -26,7 +26,7 @@ $images = $stmt->fetchAll();
 
 <div class="project-detail-grid">
     <!-- Image Carousel -->
-    <div class="project-carousel-container">
+    <div class="project-carousel-container card-3d-target">
         <div class="project-carousel-large">
             <?php if (!empty($images)): ?>
                 <img src="<?= htmlspecialchars($images[0]['image_path']) ?>" class="main-image" alt="<?= htmlspecialchars($project['title']) ?>">
@@ -56,7 +56,7 @@ $images = $stmt->fetchAll();
     </div>
     
     <!-- Project Info Panel -->
-    <div class="project-info-panel">
+    <div class="project-info-panel card-3d-target">
         <h1><?= htmlspecialchars($project['title']) ?></h1>
         
         <div class="project-meta">

@@ -8,7 +8,7 @@ include 'includes/header.php';
 
 <div class="aspirations-grid">
     <!-- Career Goals -->
-    <div class="aspiration-card">
+    <div class="aspiration-card card-3d-target">
         <div class="card-header-3d career">
             <span class="icon"><i class="bi bi-briefcase-fill"></i></span>
             <h3>Objectifs de Carrière</h3>
@@ -36,7 +36,7 @@ include 'includes/header.php';
     </div>
     
     <!-- Education Goals -->
-    <div class="aspiration-card">
+    <div class="aspiration-card card-3d-target">
         <div class="card-header-3d education">
             <span class="icon"><i class="bi bi-mortarboard-fill"></i></span>
             <h3>Objectifs Scolaires</h3>
@@ -60,7 +60,7 @@ include 'includes/header.php';
     </div>
     
     <!-- Personal Growth -->
-    <div class="aspiration-card">
+    <div class="aspiration-card card-3d-target">
         <div class="card-header-3d personal">
             <span class="icon"><i class="bi bi-heart-fill"></i></span>
             <h3>Objectifs Personnels</h3>

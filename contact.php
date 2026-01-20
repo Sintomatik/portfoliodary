@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p class="page-subtitle">N'hésitez pas à me contacter</p>
 
 <section class="contact-section">
-    <div class="contact-form">
+    <div class="contact-form card-3d-target">
         <?php if (isset($success)): ?>
             <div class="alert-3d success">
                 <i class="bi bi-check-circle"></i>

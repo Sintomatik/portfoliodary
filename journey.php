@@ -8,7 +8,7 @@ include 'includes/header.php';
 
 <div class="timeline-3d">
     <!-- Timeline Item 1 -->
-    <div class="timeline-item-3d">
+    <div class="timeline-item-3d card-3d-target">
         <div class="timeline-badge-3d purple">
             <i class="bi bi-mortarboard"></i>
         </div>
@@ -20,7 +20,7 @@ include 'includes/header.php';
     </div>
     
     <!-- Timeline Item 2 -->
-    <div class="timeline-item-3d">
+    <div class="timeline-item-3d card-3d-target">
         <div class="timeline-badge-3d cyan">
             <i class="bi bi-code-slash"></i>
         </div>
@@ -32,7 +32,7 @@ include 'includes/header.php';
     </div>
     
     <!-- Timeline Item 3 -->
-    <div class="timeline-item-3d">
+    <div class="timeline-item-3d card-3d-target">
         <div class="timeline-badge-3d pink">
             <i class="bi bi-building"></i>
         </div>
@@ -44,7 +44,7 @@ include 'includes/header.php';
     </div>
     
     <!-- Timeline Item 4 -->
-    <div class="timeline-item-3d">
+    <div class="timeline-item-3d card-3d-target">
         <div class="timeline-badge-3d cyan">
             <i class="bi bi-briefcase"></i>
         </div>
@@ -56,7 +56,7 @@ include 'includes/header.php';
     </div>
     
     <!-- Timeline Item 5 -->
-    <div class="timeline-item-3d">
+    <div class="timeline-item-3d card-3d-target">
         <div class="timeline-badge-3d purple">
             <i class="bi bi-trophy"></i>
         </div>
