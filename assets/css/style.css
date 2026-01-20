@@ -1384,66 +1384,46 @@ textarea.form-input {
    THREE.JS 3D DEPTH ENHANCEMENTS
    ============================================ */
 
-/* Flip card 3D wrapper */
+/* Flip card 3D wrapper - no longer used, kept for compatibility */
 .flip-card-3d-wrapper {
-    position: relative;
-    height: 450px;
-    transform-style: preserve-3d;
-    transition: transform 0.15s ease-out;
+    display: contents;
 }
 
-.flip-card-3d-wrapper .flip-card {
-    height: 100%;
+/* Simple flip card glow - use box-shadow instead of ::before */
+.flip-card.card-3d-target .flip-card-front,
+.flip-card.card-3d-target .flip-card-front,
+.flip-card.card-3d-target .flip-card-back {
+    transition: box-shadow 0.3s ease;
+    box-shadow: none; /* Default no glow */
 }
 
-.flip-card-3d-wrapper.is-hovered-3d {
-    z-index: 10;
+/* Hide all shadows during flip transition */
+.flip-card.card-3d-target.flipping .flip-card-front,
+.flip-card.card-3d-target.flipping .flip-card-back {
+    box-shadow: none !important;
 }
 
-/* Remove all glow effects from wrapper - apply to card faces instead */
-.flip-card-3d-wrapper::before {
-    display: none;
+/* Only show glow on front when not flipped */
+.flip-card.card-3d-target:not(.flipped):not(.flipping):hover .flip-card-front {
+    box-shadow: 
+        0 0 30px rgba(123, 44, 191, 0.6),
+        0 0 60px rgba(0, 212, 255, 0.4),
+        0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* Glow effect directly on flip-card-front and flip-card-back */
-.flip-card-3d-wrapper .flip-card-front::before,
-.flip-card-3d-wrapper .flip-card-back::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    background: linear-gradient(135deg, 
-        var(--accent-purple) 0%, 
-        var(--accent-cyan) 50%, 
-        var(--accent-pink) 100%);
-    border-radius: 22px;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    filter: blur(12px);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+/* Only show glow on back when flipped */
+.flip-card.card-3d-target.flipped:not(.flipping):hover .flip-card-back {
+    box-shadow: 
+        0 0 30px rgba(123, 44, 191, 0.6),
+        0 0 60px rgba(0, 212, 255, 0.4),
+        0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* Only show glow on the visible face */
-.flip-card-3d-wrapper.is-hovered-3d .flip-card:not(.flipped) .flip-card-front::before {
-    opacity: 0.7;
-    animation: borderPulse 2s ease-in-out infinite;
-}
-
-.flip-card-3d-wrapper.is-hovered-3d .flip-card.flipped .flip-card-back::before {
-    opacity: 0.7;
-    animation: borderPulse 2s ease-in-out infinite;
-}
-
-/* Hide glow on back when not flipped, hide glow on front when flipped */
-.flip-card-3d-wrapper .flip-card:not(.flipped) .flip-card-back::before,
-.flip-card-3d-wrapper .flip-card.flipped .flip-card-front::before {
-    opacity: 0 !important;
-}
-
-/* Remove glow from flip-card itself to prevent bleed-through */
-.flip-card.card-3d-target::before {
-    display: none;
+/* Remove any ::before glow from flip cards */
+.flip-card.card-3d-target::before,
+.flip-card.card-3d-target .flip-card-front::before,
+.flip-card.card-3d-target .flip-card-back::before {
+    display: none !important;
 }
 
 /* Depth indicator with corner glows */
@@ -1706,22 +1686,22 @@ textarea.form-input {
    ENHANCED 3D CARD STYLES
    ============================================ */
 
-/* Flip cards in 3D wrapper */
-.flip-card-3d-wrapper .flip-card .flip-card-front,
-.flip-card-3d-wrapper .flip-card .flip-card-back {
+/* Flip card enhanced shadows */
+.flip-card.card-3d-target .flip-card-front,
+.flip-card.card-3d-target .flip-card-back {
     box-shadow: 
-        0 25px 50px -12px rgba(0, 0, 0, 0.5),
-        0 0 25px rgba(123, 44, 191, 0.3),
+        0 20px 40px -12px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(123, 44, 191, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.flip-card-3d-wrapper.is-hovered-3d .flip-card .flip-card-front,
-.flip-card-3d-wrapper.is-hovered-3d .flip-card .flip-card-back {
+.flip-card.card-3d-target:hover .flip-card-front,
+.flip-card.card-3d-target:hover .flip-card-back {
     box-shadow: 
-        0 35px 70px -15px rgba(0, 0, 0, 0.6),
-        0 0 50px rgba(0, 212, 255, 0.5),
-        0 0 100px rgba(123, 44, 191, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        0 30px 60px -15px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(0, 212, 255, 0.5),
+        0 0 80px rgba(123, 44, 191, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 /* 3D Aspiration Cards */
