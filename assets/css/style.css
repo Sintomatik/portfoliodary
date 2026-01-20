@@ -1178,42 +1178,109 @@ textarea.form-input {
 }
 
 /* ============================================
-   THREE.JS 3D CARD OVERLAY CANVAS
+   THREE.JS 3D DEPTH ENHANCEMENTS
    ============================================ */
-#cards-3d-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+
+/* Depth indicator with corner glows */
+.depth-indicator-3d {
+    position: absolute;
+    inset: 0;
     pointer-events: none;
-    z-index: 5;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
 
-/* 3D Target Cards - these get 3D overlays */
+.card-3d-target:hover .depth-indicator-3d {
+    opacity: 1;
+}
+
+.corner-glow {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%);
+    box-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-cyan);
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.corner-glow.corner-tl {
+    top: 5px;
+    left: 5px;
+    animation-delay: 0s;
+}
+
+.corner-glow.corner-tr {
+    top: 5px;
+    right: 5px;
+    animation-delay: 0.5s;
+}
+
+.corner-glow.corner-bl {
+    bottom: 5px;
+    left: 5px;
+    animation-delay: 1s;
+}
+
+.corner-glow.corner-br {
+    bottom: 5px;
+    right: 5px;
+    animation-delay: 1.5s;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* ============================================
+   3D CARD TARGET BASE STYLES
+   ============================================ */
+
+/* 3D Target Cards - Enhanced depth */
 .card-3d-target {
     position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease;
+    will-change: transform;
 }
 
 .card-3d-target::before {
     content: '';
     position: absolute;
-    inset: -3px;
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan), var(--accent-pink));
-    border-radius: 22px;
+    inset: -2px;
+    background: linear-gradient(135deg, 
+        var(--accent-purple) 0%, 
+        var(--accent-cyan) 50%, 
+        var(--accent-pink) 100%);
+    border-radius: inherit;
     z-index: -1;
     opacity: 0;
     transition: opacity 0.4s ease;
-    animation: borderRotate 4s linear infinite;
+    filter: blur(10px);
 }
 
 .card-3d-target:hover::before {
-    opacity: 1;
+    opacity: 0.6;
+    animation: borderPulse 2s ease-in-out infinite;
 }
 
-@keyframes borderRotate {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
+@keyframes borderPulse {
+    0%, 100% {
+        filter: blur(10px);
+        opacity: 0.6;
+    }
+    50% {
+        filter: blur(15px);
+        opacity: 0.8;
+    }
 }
 
 /* ============================================
@@ -1298,64 +1365,37 @@ textarea.form-input {
    ============================================ */
 .flip-card.card-3d-target {
     transform-style: preserve-3d;
-    transform: perspective(1500px);
 }
 
 .flip-card.card-3d-target .flip-card-front,
 .flip-card.card-3d-target .flip-card-back {
     box-shadow: 
-        0 25px 50px -12px rgba(0, 0, 0, 0.5),
-        0 0 30px rgba(123, 44, 191, 0.3),
+        0 20px 40px -12px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(123, 44, 191, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .flip-card.card-3d-target:hover .flip-card-front,
 .flip-card.card-3d-target:hover .flip-card-back {
     box-shadow: 
-        0 35px 60px -15px rgba(0, 0, 0, 0.6),
-        0 0 50px rgba(0, 212, 255, 0.4),
-        0 0 100px rgba(123, 44, 191, 0.2),
+        0 30px 60px -15px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(0, 212, 255, 0.4),
+        0 0 80px rgba(123, 44, 191, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-/* Holographic effect on cards */
-.flip-card.card-3d-target::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        125deg,
-        transparent 0%,
-        rgba(123, 44, 191, 0.1) 25%,
-        rgba(0, 212, 255, 0.15) 50%,
-        rgba(199, 125, 255, 0.1) 75%,
-        transparent 100%
-    );
-    border-radius: 20px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: 10;
-}
-
-.flip-card.card-3d-target:hover::after {
-    opacity: 1;
-    animation: holographicShine 2s ease-in-out infinite;
-}
-
-@keyframes holographicShine {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
 }
 
 /* 3D Aspiration Cards */
 .aspiration-card.card-3d-target {
     transform-style: preserve-3d;
-    transform: perspective(1000px);
 }
 
-.aspiration-card.card-3d-target:hover {
-    transform: perspective(1000px) rotateX(-5deg) rotateY(5deg) translateZ(20px);
+.aspiration-card.card-3d-target .card-body-3d {
+    transform: translateZ(10px);
+    transition: transform 0.3s ease;
+}
+
+.aspiration-card.card-3d-target:hover .card-body-3d {
+    transform: translateZ(30px);
 }
 
 /* 3D Timeline Items */
@@ -1363,92 +1403,43 @@ textarea.form-input {
     transform-style: preserve-3d;
 }
 
-.timeline-item-3d.card-3d-target:hover .timeline-content {
-    transform: translateZ(30px) scale(1.02);
+.timeline-item-3d.card-3d-target .timeline-content-3d {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-item-3d.card-3d-target:hover .timeline-content-3d {
+    transform: translateZ(25px) scale(1.02);
     box-shadow: 
-        0 30px 60px -15px rgba(0, 0, 0, 0.5),
-        0 0 40px rgba(123, 44, 191, 0.4);
-}
-
-/* Glowing orbs around 3D elements */
-.card-3d-target .glow-orb {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--accent-cyan);
-    box-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-cyan);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.card-3d-target:hover .glow-orb {
-    opacity: 1;
-    animation: orbitGlow 3s linear infinite;
-}
-
-@keyframes orbitGlow {
-    0% { transform: rotate(0deg) translateX(50px) rotate(0deg); }
-    100% { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
-}
-
-/* 3D depth lines behind cards */
-.projects-grid::before {
-    content: '';
-    position: absolute;
-    inset: 50px;
-    border: 1px dashed var(--glass-border);
-    border-radius: 30px;
-    opacity: 0.3;
-    pointer-events: none;
-    transform: translateZ(-50px);
-}
-
-.projects-grid {
-    position: relative;
-    transform-style: preserve-3d;
-}
-
-/* Hero 3D enhancement */
-.hero-section {
-    position: relative;
-    transform-style: preserve-3d;
-}
-
-.hero-section .hero-title {
-    transform: translateZ(50px);
-    text-shadow: 
-        0 5px 15px rgba(0, 0, 0, 0.5),
-        0 0 30px rgba(123, 44, 191, 0.5);
-}
-
-.hero-section .hero-subtitle {
-    transform: translateZ(30px);
-}
-
-.hero-section .hero-cta {
-    transform: translateZ(40px);
+        0 25px 50px -15px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(123, 44, 191, 0.4);
 }
 
 /* 3D Contact Form Enhancement */
 .contact-form.card-3d-target {
     transform-style: preserve-3d;
-    transform: perspective(1200px);
 }
 
-.contact-form.card-3d-target:hover {
-    transform: perspective(1200px) rotateX(-2deg) rotateY(2deg) translateZ(15px);
+.contact-form.card-3d-target .form-group {
+    transform: translateZ(5px);
+    transition: transform 0.3s ease;
+}
+
+.contact-form.card-3d-target:hover .form-group {
+    transform: translateZ(15px);
 }
 
 /* 3D Project Info Panel */
 .project-info-panel.card-3d-target {
     transform-style: preserve-3d;
-    transform: perspective(1000px);
 }
 
-.project-info-panel.card-3d-target:hover {
-    transform: perspective(1000px) rotateX(-3deg) rotateY(-3deg) translateZ(20px);
+.project-info-panel.card-3d-target h1 {
+    transform: translateZ(20px);
+    transition: transform 0.3s ease;
+}
+
+.project-info-panel.card-3d-target:hover h1 {
+    transform: translateZ(35px);
 }
 
 /* 3D Carousel Container */
@@ -1456,7 +1447,12 @@ textarea.form-input {
     transform-style: preserve-3d;
 }
 
-.project-carousel-container.card-3d-target:hover {
-    transform: perspective(1000px) rotateY(3deg) translateZ(15px);
+.project-carousel-container.card-3d-target .main-image {
+    transform: translateZ(10px);
+    transition: transform 0.3s ease;
+}
+
+.project-carousel-container.card-3d-target:hover .main-image {
+    transform: translateZ(25px);
 }
 

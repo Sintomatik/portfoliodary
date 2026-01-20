@@ -224,209 +224,48 @@ class ThreeBackground {
 }
 
 // ============================================
-// 3D CARD RENDERER - Real Three.js 3D Objects
+// 3D CARD ENHANCEMENTS - Subtle Depth Effects
 // ============================================
 
-class Card3DRenderer {
+class Card3DEnhancer {
     constructor() {
-        this.scene = null;
-        this.camera = null;
-        this.renderer = null;
         this.cards = [];
-        this.raycaster = null;
-        this.mouse = new THREE.Vector2();
-        this.clock = null;
-        this.hoveredCard = null;
-        
         this.init();
     }
     
     init() {
-        if (typeof THREE === 'undefined') return;
-        
-        // Create overlay canvas for 3D cards
-        this.canvas = document.createElement('canvas');
-        this.canvas.id = 'cards-3d-canvas';
-        this.canvas.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-        `;
-        document.body.appendChild(this.canvas);
-        
-        this.scene = new THREE.Scene();
-        this.clock = new THREE.Clock();
-        this.raycaster = new THREE.Raycaster();
-        
-        this.camera = new THREE.PerspectiveCamera(
-            60,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000
-        );
-        this.camera.position.z = 50;
-        
-        this.renderer = new THREE.WebGLRenderer({
-            canvas: this.canvas,
-            antialias: true,
-            alpha: true
-        });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-        this.scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(5, 5, 10);
-        this.scene.add(directionalLight);
-        
-        const purpleLight = new THREE.PointLight(0x7b2cbf, 2, 100);
-        purpleLight.position.set(-10, 10, 20);
-        this.scene.add(purpleLight);
-        
-        const cyanLight = new THREE.PointLight(0x00d4ff, 2, 100);
-        cyanLight.position.set(10, -10, 20);
-        this.scene.add(cyanLight);
-        
-        this.createCard3DObjects();
-        
-        window.addEventListener('resize', () => this.onResize());
-        document.addEventListener('mousemove', (e) => this.onMouseMove(e));
-        document.addEventListener('scroll', () => this.updateCardPositions());
-        
-        this.animate();
-    }
-    
-    createCard3DObjects() {
-        // Find all card elements to create 3D representations
+        // Find all 3D target cards
         const cardElements = document.querySelectorAll('.card-3d-target');
         
-        cardElements.forEach((el, index) => {
-            const card3D = this.createSingle3DCard(el, index);
-            if (card3D) {
-                this.cards.push(card3D);
-                this.scene.add(card3D.group);
-            }
+        cardElements.forEach((element, index) => {
+            this.enhanceCard(element, index);
         });
+        
+        document.addEventListener('mousemove', (e) => this.onMouseMove(e));
     }
     
-    createSingle3DCard(element, index) {
-        const rect = element.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) return null;
+    enhanceCard(element, index) {
+        // Add visual depth indicators
+        const depthIndicator = document.createElement('div');
+        depthIndicator.className = 'depth-indicator-3d';
+        depthIndicator.innerHTML = `
+            <div class="corner-glow corner-tl"></div>
+            <div class="corner-glow corner-tr"></div>
+            <div class="corner-glow corner-bl"></div>
+            <div class="corner-glow corner-br"></div>
+        `;
+        element.style.position = 'relative';
+        element.appendChild(depthIndicator);
         
-        const group = new THREE.Group();
-        
-        // Scale factor to convert pixels to 3D units
-        const scale = 0.02;
-        const width = rect.width * scale;
-        const height = rect.height * scale;
-        const depth = 0.3;
-        
-        // Main card body - rounded box effect with multiple layers
-        const cardGeometry = new THREE.BoxGeometry(width, height, depth, 2, 2, 2);
-        
-        // Front face material with gradient-like effect
-        const cardMaterial = new THREE.MeshPhongMaterial({
-            color: 0x1a0a2e,
-            transparent: true,
-            opacity: 0.85,
-            shininess: 100,
-            specular: 0x7b2cbf
-        });
-        
-        const cardMesh = new THREE.Mesh(cardGeometry, cardMaterial);
-        group.add(cardMesh);
-        
-        // Glowing edge frame
-        const edgesGeometry = new THREE.EdgesGeometry(cardGeometry);
-        const edgesMaterial = new THREE.LineBasicMaterial({ 
-            color: 0x7b2cbf,
-            transparent: true,
-            opacity: 0.8
-        });
-        const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
-        group.add(edges);
-        
-        // Corner accent spheres
-        const cornerPositions = [
-            [-width/2, height/2, depth/2],
-            [width/2, height/2, depth/2],
-            [-width/2, -height/2, depth/2],
-            [width/2, -height/2, depth/2]
-        ];
-        
-        cornerPositions.forEach(pos => {
-            const sphereGeom = new THREE.SphereGeometry(0.08, 8, 8);
-            const sphereMat = new THREE.MeshBasicMaterial({ 
-                color: 0x00d4ff,
-                transparent: true,
-                opacity: 0.9
-            });
-            const sphere = new THREE.Mesh(sphereGeom, sphereMat);
-            sphere.position.set(pos[0], pos[1], pos[2]);
-            group.add(sphere);
-        });
-        
-        // Floating rings around card
-        const ringGeometry = new THREE.TorusGeometry(Math.max(width, height) * 0.6, 0.02, 8, 32);
-        const ringMaterial = new THREE.MeshBasicMaterial({
-            color: 0x9d4edd,
-            transparent: true,
-            opacity: 0.3
-        });
-        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-        ring.rotation.x = Math.PI / 2;
-        ring.position.z = -0.5;
-        group.add(ring);
-        
-        // Store reference data
-        group.userData = {
+        this.cards.push({
             element: element,
-            originalPosition: new THREE.Vector3(),
-            targetRotation: new THREE.Euler(0, 0, 0),
-            currentRotation: new THREE.Euler(0, 0, 0),
-            isHovered: false,
-            index: index,
-            floatOffset: Math.random() * Math.PI * 2,
-            ring: ring
-        };
-        
-        return { group, element, edges, ring };
-    }
-    
-    updateCardPositions() {
-        this.cards.forEach(({ group, element }) => {
-            const rect = element.getBoundingClientRect();
-            
-            // Convert screen coordinates to 3D world coordinates
-            const x = (rect.left + rect.width / 2 - window.innerWidth / 2) * 0.02;
-            const y = -(rect.top + rect.height / 2 - window.innerHeight / 2) * 0.02;
-            
-            group.userData.originalPosition.set(x, y, 0);
-            group.position.x = x;
-            group.position.y = y;
+            depthIndicator: depthIndicator,
+            index: index
         });
-    }
-    
-    onResize() {
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.updateCardPositions();
     }
     
     onMouseMove(event) {
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        
-        // Check which card is hovered based on DOM element
-        this.cards.forEach(({ group, element }) => {
+        this.cards.forEach(({ element }) => {
             const rect = element.getBoundingClientRect();
             const isHovered = (
                 event.clientX >= rect.left &&
@@ -435,58 +274,17 @@ class Card3DRenderer {
                 event.clientY <= rect.bottom
             );
             
-            group.userData.isHovered = isHovered;
-            
             if (isHovered) {
-                // Calculate rotation based on mouse position within card
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
-                const rotY = ((event.clientX - centerX) / rect.width) * 0.4;
-                const rotX = -((event.clientY - centerY) / rect.height) * 0.4;
+                const rotateY = ((event.clientX - centerX) / rect.width) * 15;
+                const rotateX = -((event.clientY - centerY) / rect.height) * 15;
                 
-                group.userData.targetRotation.set(rotX, rotY, 0);
+                element.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px) scale(1.02)`;
             } else {
-                group.userData.targetRotation.set(0, 0, 0);
+                element.style.transform = '';
             }
         });
-    }
-    
-    animate() {
-        requestAnimationFrame(() => this.animate());
-        
-        const elapsedTime = this.clock.getElapsedTime();
-        
-        this.cards.forEach(({ group, edges, ring }) => {
-            const userData = group.userData;
-            
-            // Smooth rotation interpolation
-            group.rotation.x += (userData.targetRotation.x - group.rotation.x) * 0.1;
-            group.rotation.y += (userData.targetRotation.y - group.rotation.y) * 0.1;
-            
-            // Floating animation
-            const floatY = Math.sin(elapsedTime * 0.8 + userData.floatOffset) * 0.1;
-            group.position.z = userData.isHovered ? 2 : floatY;
-            
-            // Scale on hover
-            const targetScale = userData.isHovered ? 1.05 : 1;
-            group.scale.x += (targetScale - group.scale.x) * 0.1;
-            group.scale.y += (targetScale - group.scale.y) * 0.1;
-            group.scale.z += (targetScale - group.scale.z) * 0.1;
-            
-            // Animate ring
-            if (ring) {
-                ring.rotation.z = elapsedTime * 0.2 + userData.floatOffset;
-                ring.material.opacity = userData.isHovered ? 0.6 : 0.3;
-            }
-            
-            // Edge glow on hover
-            if (edges) {
-                edges.material.color.setHex(userData.isHovered ? 0x00d4ff : 0x7b2cbf);
-                edges.material.opacity = userData.isHovered ? 1 : 0.6;
-            }
-        });
-        
-        this.renderer.render(this.scene, this.camera);
     }
 }
 
@@ -891,12 +689,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize Three.js background
     const threeBackground = new ThreeBackground();
     
-    // Initialize 3D card renderer for cards with the target class
+    // Initialize 3D card enhancer (lightweight CSS-based 3D)
     setTimeout(() => {
-        const card3DRenderer = new Card3DRenderer();
-        // Update positions after initial render
-        setTimeout(() => card3DRenderer.updateCardPositions(), 100);
-    }, 300);
+        new Card3DEnhancer();
+    }, 100);
     
     // Initialize section 3D decorations
     new Section3DDecorations();
@@ -930,5 +726,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize delete confirmation
     initDeleteConfirmation();
     
-    console.log('✨ Dark Purple 3D Portfolio with Real 3D Objects Initialized');
+    console.log('✨ Dark Purple 3D Portfolio with Real 3D Effects Initialized');
 });
