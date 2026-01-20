@@ -1,21 +1,63 @@
+/**
+ * Portfolio Main Script
+ * Handles flip cards, form validation, and interactions
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    // Simple confirmation for delete actions
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (!confirm('Are you sure you want to delete this project?')) {
+    'use strict';
+    
+    // Initialize flip cards
+    initFlipCards();
+    
+    // Initialize form validation
+    initFormValidation();
+    
+    // Initialize delete confirmations
+    initDeleteConfirmations();
+});
+
+/**
+ * Initialize 3D Flip Cards
+ */
+function initFlipCards() {
+    var flipCards = document.querySelectorAll('.flip-card-wrapper');
+    
+    flipCards.forEach(function(wrapper) {
+        var card = wrapper.querySelector('.flip-card');
+        var flipBtns = wrapper.querySelectorAll('.flip-btn');
+        
+        if (!card) return;
+        
+        // Flip button click handlers
+        flipBtns.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
-            }
+                e.stopPropagation();
+                card.classList.toggle('flipped');
+            });
+        });
+        
+        // Prevent carousel controls from triggering flip
+        var carouselControls = wrapper.querySelectorAll('.carousel-control-prev, .carousel-control-next, .carousel-indicators button');
+        carouselControls.forEach(function(control) {
+            control.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         });
     });
+}
+
+/**
+ * Initialize Form Validation
+ */
+function initFormValidation() {
+    var forms = document.querySelectorAll('form');
     
-    // Form validation example
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
+    forms.forEach(function(form) {
         form.addEventListener('submit', function(e) {
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
+            var requiredFields = form.querySelectorAll('[required]');
+            var isValid = true;
             
-            requiredFields.forEach(field => {
+            requiredFields.forEach(function(field) {
                 if (!field.value.trim()) {
                     field.classList.add('is-invalid');
                     isValid = false;
@@ -26,89 +68,39 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!isValid) {
                 e.preventDefault();
-                alert('Please fill in all required fields.');
+                alert('Veuillez remplir tous les champs requis.');
             }
         });
     });
+}
 
-    // 3D Flip Card Interactions
-    initFlipCards();
-});
-
-function initFlipCards() {
-    const flipCards = document.querySelectorAll('.flip-card-container');
+/**
+ * Initialize Delete Confirmations
+ */
+function initDeleteConfirmations() {
+    var deleteButtons = document.querySelectorAll('.delete-btn, [data-confirm]');
     
-    flipCards.forEach(container => {
-        const card = container.querySelector('.flip-card');
-        const flipBtn = container.querySelectorAll('.flip-btn');
-        
-        if (!card) return;
-        
-        // Add click handler to flip buttons
-        flipBtn.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevent card click
-                toggleFlipCard(card);
-            });
-        });
-        
-        // Optional: Click on card to flip (excluding carousel controls)
-        card.addEventListener('click', function(e) {
-            // Don't flip if clicking carousel controls
-            if (e.target.closest('.carousel-control-prev') || 
-                e.target.closest('.carousel-control-next') ||
-                e.target.closest('.carousel-indicators') ||
-                e.target.closest('.flip-btn')) {
-                return;
-            }
-            
-            // Only flip if clicking on the card info section or back face
-            if (e.target.closest('.card-info') || 
-                e.target.closest('.flip-card-back')) {
-                toggleFlipCard(card);
+    deleteButtons.forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            var message = button.dataset.confirm || 'Êtes-vous sûr de vouloir supprimer cet élément?';
+            if (!confirm(message)) {
+                e.preventDefault();
             }
         });
     });
 }
 
-function toggleFlipCard(card) {
-    card.classList.toggle('flipped');
-    
-    // Add subtle shake animation
-    card.style.animation = 'none';
-    setTimeout(() => {
-        card.style.animation = '';
-    }, 10);
-}
-
-// Carousel image preloading for smooth transitions
-function preloadCarouselImages() {
-    const carousels = document.querySelectorAll('.card-carousel');
-    carousels.forEach(carousel => {
-        const images = carousel.querySelectorAll('img');
-        images.forEach(img => {
-            const preloadImg = new Image();
-            preloadImg.src = img.src;
-        });
-    });
-}
-
-// Call preload on DOM ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', preloadCarouselImages);
-} else {
-    preloadCarouselImages();
-}
-
-// Smooth scroll for navigation
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
+/**
+ * Smooth scroll for anchor links
+ */
+document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+        var href = this.getAttribute('href');
         if (href === '#') return;
         
-        e.preventDefault();
-        const target = document.querySelector(href);
+        var target = document.querySelector(href);
         if (target) {
+            e.preventDefault();
             target.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
@@ -116,42 +108,3 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
-
-// Add entrance animations for cards
-function addEntranceAnimations() {
-    const cards = document.querySelectorAll('.flip-card-container, .card');
-    
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '0';
-                entry.target.style.transform = 'translateY(30px)';
-                
-                setTimeout(() => {
-                    entry.target.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }, 100);
-                
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-    
-    cards.forEach((card, index) => {
-        card.style.transitionDelay = `${index * 0.1}s`;
-        observer.observe(card);
-    });
-}
-
-// Initialize entrance animations
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', addEntranceAnimations);
-} else {
-    addEntranceAnimations();
-}

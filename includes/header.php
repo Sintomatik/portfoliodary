@@ -4,46 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - <?php echo $pageTitle ?? 'Home'; ?></title>
-    <!-- Bootstrap CSS first -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Custom CSS last (to override Bootstrap) -->
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-    <!-- Three.js Canvas for 3D Background -->
-    <canvas id="three-canvas"></canvas>
+    <!-- 3D Background Container -->
+    <div id="bg-container"></div>
     
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="index.php">✦ Portfolio</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="projects.php">Projets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="journey.php">Mon Parcours</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="aspirations.php">Mes Aspirations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.php">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin/login.php">Admin</a>
-                    </li>
-                </ul>
+    <!-- Main Content Wrapper -->
+    <div id="page-wrapper">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="index.php">✦ Portfolio</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.php">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="projects.php">Projets</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="journey.php">Mon Parcours</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="aspirations.php">Mes Aspirations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.php">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin/login.php">Admin</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
-    <div class="container mt-4">
+        </nav>
+        
+        <main class="container py-4">

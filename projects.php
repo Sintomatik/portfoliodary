@@ -1,15 +1,14 @@
 <?php 
-$pageTitle = "Projects";
+$pageTitle = "Projets";
 include 'includes/header.php'; 
 include 'includes/db.php';
 ?>
 
 <h1>✨ Mes Projets</h1>
-<p class="lead">Découvrez mes créations en 3D - Cliquez sur les cartes pour les retourner</p>
+<p class="lead mb-4">Découvrez mes créations - Cliquez sur les cartes pour les retourner</p>
 
-<div class="row mt-4">
+<div class="row">
     <?php
-    // Get all projects with their images
     $stmt = $pdo->query("
         SELECT p.* 
         FROM projects p
@@ -26,86 +25,89 @@ include 'includes/db.php';
         ");
         $imgStmt->execute([$project['id']]);
         $images = $imgStmt->fetchAll();
-        
-        echo '<div class="col-md-4 mb-5">';
-        echo '  <div class="flip-card-container">';
-        echo '    <div class="flip-card">';
-        
-        // FRONT FACE - Carousel
-        echo '      <div class="flip-card-face flip-card-front">';
-        
-        if (count($images) > 0) {
-            echo '        <div id="carousel' . $project['id'] . '" class="carousel slide card-carousel" data-bs-ride="false">';
-            echo '          <div class="carousel-indicators">';
-            foreach ($images as $index => $img) {
-                $active = $index === 0 ? 'active' : '';
-                echo '            <button type="button" data-bs-target="#carousel' . $project['id'] . '" data-bs-slide-to="' . $index . '" class="' . $active . '"></button>';
-            }
-            echo '          </div>';
-            
-            echo '          <div class="carousel-inner">';
-            foreach ($images as $index => $img) {
-                $active = $index === 0 ? 'active' : '';
-                echo '            <div class="carousel-item ' . $active . '">';
-                echo '              <img src="' . htmlspecialchars($img['image_path']) . '" class="d-block w-100" alt="' . htmlspecialchars($project['title']) . '">';
-                echo '            </div>';
-            }
-            echo '          </div>';
-            
-            if (count($images) > 1) {
-                echo '          <button class="carousel-control-prev" type="button" data-bs-target="#carousel' . $project['id'] . '" data-bs-slide="prev">';
-                echo '            <span class="carousel-control-prev-icon"></span>';
-                echo '          </button>';
-                echo '          <button class="carousel-control-next" type="button" data-bs-target="#carousel' . $project['id'] . '" data-bs-slide="next">';
-                echo '            <span class="carousel-control-next-icon"></span>';
-                echo '          </button>';
-            }
-            
-            echo '        </div>';
-        } else {
-            echo '        <div class="card-carousel d-flex align-items-center justify-content-center" style="background: rgba(157, 78, 221, 0.1);">';
-            echo '          <div class="text-center">';
-            echo '            <i class="bi bi-image" style="font-size: 4rem; color: #9d4edd;"></i>';
-            echo '            <p class="mt-2" style="color: #c77dff;">Aucune image</p>';
-            echo '          </div>';
-            echo '        </div>';
-        }
-        
-        echo '        <div class="card-info">';
-        echo '          <h5>' . htmlspecialchars($project['title']) . '</h5>';
-        echo '          <p>' . substr(htmlspecialchars($project['description']), 0, 80) . '...</p>';
-        echo '        </div>';
-        echo '        <button class="flip-btn">ℹ️ Plus d\'infos</button>';
-        echo '      </div>';
-        
-        // BACK FACE - Information
-        echo '      <div class="flip-card-face flip-card-back">';
-        echo '        <div class="back-content">';
-        echo '          <h3>' . htmlspecialchars($project['title']) . '</h3>';
-        echo '          <p>' . nl2br(htmlspecialchars($project['description'])) . '</p>';
-        
-        if (!empty($project['technologies'])) {
-            echo '          <h5 style="color: #9d4edd; margin-top: 20px;">Technologies utilisées:</h5>';
-            echo '          <ul>';
-            $techs = explode(',', $project['technologies']);
-            foreach ($techs as $tech) {
-                echo '            <li>' . htmlspecialchars(trim($tech)) . '</li>';
-            }
-            echo '          </ul>';
-        }
-        
-        echo '          <div style="margin-top: auto; padding-top: 20px;">';
-        echo '            <a href="project_detail.php?id=' . $project['id'] . '" class="btn btn-primary">Voir les détails complets</a>';
-        echo '          </div>';
-        echo '        </div>';
-        echo '        <button class="flip-btn">🔄 Retour</button>';
-        echo '      </div>';
-        
-        echo '    </div>';
-        echo '  </div>';
-        echo '</div>';
-    }
+        $projectId = $project['id'];
+        $title = htmlspecialchars($project['title']);
+        $description = htmlspecialchars($project['description']);
+        $shortDesc = substr($description, 0, 80);
     ?>
+    
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="flip-card-wrapper">
+            <div class="flip-card">
+                <!-- FRONT -->
+                <div class="flip-card-front">
+                    <?php if (count($images) > 0): ?>
+                        <div id="carousel<?php echo $projectId; ?>" class="carousel slide card-carousel" data-bs-ride="false">
+                            <div class="carousel-indicators">
+                                <?php foreach ($images as $idx => $img): ?>
+                                    <button type="button" 
+                                            data-bs-target="#carousel<?php echo $projectId; ?>" 
+                                            data-bs-slide-to="<?php echo $idx; ?>" 
+                                            class="<?php echo $idx === 0 ? 'active' : ''; ?>">
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="carousel-inner">
+                                <?php foreach ($images as $idx => $img): ?>
+                                    <div class="carousel-item <?php echo $idx === 0 ? 'active' : ''; ?>">
+                                        <img src="<?php echo htmlspecialchars($img['image_path']); ?>" 
+                                             class="d-block w-100" 
+                                             alt="<?php echo $title; ?>">
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php if (count($images) > 1): ?>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carousel<?php echo $projectId; ?>" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carousel<?php echo $projectId; ?>" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+                            <?php endif; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="no-image">
+                            <i class="bi bi-image"></i>
+                            <p>Aucune image</p>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="card-info">
+                        <h5><?php echo $title; ?></h5>
+                        <p><?php echo $shortDesc; ?>...</p>
+                    </div>
+                    <button class="flip-btn">ℹ️ Plus d'infos</button>
+                </div>
+                
+                <!-- BACK -->
+                <div class="flip-card-back">
+                    <div class="back-content">
+                        <h3><?php echo $title; ?></h3>
+                        <p><?php echo nl2br($description); ?></p>
+                        
+                        <?php if (!empty($project['technologies'])): ?>
+                            <h5>Technologies utilisées</h5>
+                            <ul>
+                                <?php 
+                                $techs = explode(',', $project['technologies']);
+                                foreach ($techs as $tech): 
+                                ?>
+                                    <li><?php echo htmlspecialchars(trim($tech)); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                        
+                        <a href="project_detail.php?id=<?php echo $projectId; ?>" class="btn btn-primary mt-3">
+                            Voir les détails
+                        </a>
+                    </div>
+                    <button class="flip-btn">🔄 Retour</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <?php } ?>
 </div>
 
 <?php include 'includes/footer.php'; ?>
