@@ -37,6 +37,15 @@
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            // Ensure canvas doesn't affect layout
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = '-10';
+            canvas.style.pointerEvents = 'none';
 
             // Lighting
             var ambientLight = new THREE.AmbientLight(0x6b4fd9, 0.5);
