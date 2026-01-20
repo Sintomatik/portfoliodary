@@ -224,7 +224,7 @@ class ThreeBackground {
 }
 
 // ============================================
-// 3D CARD ENHANCEMENTS - Subtle Depth Effects
+// 3D CARD ENHANCEMENTS - Interactive Depth Effects
 // ============================================
 
 class Card3DEnhancer {
@@ -234,17 +234,24 @@ class Card3DEnhancer {
     }
     
     init() {
-        // Find all 3D target cards
-        const cardElements = document.querySelectorAll('.card-3d-target');
+        // Find all 3D target cards (excluding flip-cards which have their own transform)
+        const cardElements = document.querySelectorAll('.card-3d-target:not(.flip-card)');
+        const flipCards = document.querySelectorAll('.flip-card.card-3d-target');
         
+        // Enhance non-flip cards with full 3D tilt
         cardElements.forEach((element, index) => {
-            this.enhanceCard(element, index);
+            this.enhanceCard(element, index, false);
+        });
+        
+        // Enhance flip cards with wrapper-based 3D
+        flipCards.forEach((element, index) => {
+            this.enhanceFlipCard(element, index);
         });
         
         document.addEventListener('mousemove', (e) => this.onMouseMove(e));
     }
     
-    enhanceCard(element, index) {
+    enhanceCard(element, index, isFlipCard) {
         // Add visual depth indicators
         const depthIndicator = document.createElement('div');
         depthIndicator.className = 'depth-indicator-3d';
@@ -253,6 +260,10 @@ class Card3DEnhancer {
             <div class="corner-glow corner-tr"></div>
             <div class="corner-glow corner-bl"></div>
             <div class="corner-glow corner-br"></div>
+            <div class="edge-glow edge-top"></div>
+            <div class="edge-glow edge-right"></div>
+            <div class="edge-glow edge-bottom"></div>
+            <div class="edge-glow edge-left"></div>
         `;
         element.style.position = 'relative';
         element.appendChild(depthIndicator);
@@ -260,13 +271,42 @@ class Card3DEnhancer {
         this.cards.push({
             element: element,
             depthIndicator: depthIndicator,
-            index: index
+            index: index,
+            isFlipCard: isFlipCard
+        });
+    }
+    
+    enhanceFlipCard(element, index) {
+        // For flip cards, we wrap it to allow 3D tilt without breaking the flip
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flip-card-3d-wrapper';
+        element.parentNode.insertBefore(wrapper, element);
+        wrapper.appendChild(element);
+        
+        // Add depth indicators to the wrapper
+        const depthIndicator = document.createElement('div');
+        depthIndicator.className = 'depth-indicator-3d';
+        depthIndicator.innerHTML = `
+            <div class="corner-glow corner-tl"></div>
+            <div class="corner-glow corner-tr"></div>
+            <div class="corner-glow corner-bl"></div>
+            <div class="corner-glow corner-br"></div>
+        `;
+        wrapper.appendChild(depthIndicator);
+        
+        this.cards.push({
+            element: wrapper,
+            actualCard: element,
+            depthIndicator: depthIndicator,
+            index: index,
+            isFlipCard: true
         });
     }
     
     onMouseMove(event) {
-        this.cards.forEach(({ element }) => {
-            const rect = element.getBoundingClientRect();
+        this.cards.forEach(({ element, isFlipCard, actualCard }) => {
+            const targetEl = isFlipCard ? element : element;
+            const rect = targetEl.getBoundingClientRect();
             const isHovered = (
                 event.clientX >= rect.left &&
                 event.clientX <= rect.right &&
@@ -277,12 +317,21 @@ class Card3DEnhancer {
             if (isHovered) {
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
-                const rotateY = ((event.clientX - centerX) / rect.width) * 15;
-                const rotateX = -((event.clientY - centerY) / rect.height) * 15;
+                const rotateY = ((event.clientX - centerX) / rect.width) * 12;
+                const rotateX = -((event.clientY - centerY) / rect.height) * 12;
                 
-                element.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px) scale(1.02)`;
+                if (isFlipCard) {
+                    // Apply to wrapper for flip cards
+                    element.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                } else {
+                    // Apply directly to element
+                    element.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(15px) scale(1.02)`;
+                }
+                
+                element.classList.add('is-hovered-3d');
             } else {
                 element.style.transform = '';
+                element.classList.remove('is-hovered-3d');
             }
         });
     }
