@@ -1,24 +1,56 @@
 // Three.js 3D Background Scene
 let scene, camera, renderer, particles, geometricShapes = [];
 let mouseX = 0, mouseY = 0;
+let isInitialized = false;
+let animationId = null;
 
 function initThreeScene() {
-    // Scene setup
-    scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x1a0933, 0.002);
+    // Prevent multiple initializations
+    if (isInitialized) {
+        console.log('Three.js scene already initialized');
+        return;
+    }
 
-    // Camera setup
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 50;
+    const canvas = document.getElementById('three-canvas');
+    if (!canvas) {
+        console.warn('Three.js canvas not found');
+        return;
+    }
 
-    // Renderer setup
-    renderer = new THREE.WebGLRenderer({ 
-        canvas: document.getElementById('three-canvas'),
-        alpha: true,
-        antialias: true 
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    // Check WebGL support
+    try {
+        const testCanvas = document.createElement('canvas');
+        const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+        if (!gl) {
+            console.warn('WebGL not supported, skipping 3D background');
+            canvas.style.display = 'none';
+            return;
+        }
+    } catch (e) {
+        console.warn('WebGL context creation failed:', e);
+        canvas.style.display = 'none';
+        return;
+    }
+
+    try {
+        // Scene setup
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x1a0933, 0.002);
+
+        // Camera setup
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 50;
+
+        // Renderer setup with error handling
+        renderer = new THREE.WebGLRenderer({ 
+            canvas: canvas,
+            alpha: true,
+            antialias: true,
+            powerPreference: 'low-power',
+            failIfMajorPerformanceCaveat: false
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0x6b4fd9, 0.5);
@@ -38,12 +70,23 @@ function initThreeScene() {
     // Create geometric shapes
     createGeometricShapes();
 
-    // Event listeners
-    window.addEventListener('resize', onWindowResize);
-    document.addEventListener('mousemove', onMouseMove);
+        // Event listeners
+        window.addEventListener('resize', onWindowResize);
+        document.addEventListener('mousemove', onMouseMove);
 
-    // Start animation
-    animate();
+        isInitialized = true;
+        console.log('Three.js scene initialized successfully');
+
+        // Start animation
+        animate();
+    } catch (error) {
+        console.error('Error initializing Three.js scene:', error);
+        if (canvas) {
+            canvas.style.display = 'none';
+        }
+        // Create a static gradient fallback
+        document.body.style.background = 'linear-gradient(135deg, #0a0020 0%, #1a0933 25%, #2d0a5e 50%, #1a0933 75%, #0a0020 100%)';
+    }
 }
 
 function createParticles() {
@@ -124,38 +167,62 @@ function createGeometricShapes() {
 }
 
 function animate() {
-    requestAnimationFrame(animate);
+    if (!isInitialized || !renderer) return;
 
-    // Rotate particles
-    if (particles) {
-        particles.rotation.y += 0.0005;
-        particles.rotation.x += 0.0002;
+    animationId = requestAnimationFrame(animate);
+
+    try {
+        // Rotate particles
+        if (particles) {
+            particles.rotation.y += 0.0005;
+            particles.rotation.x += 0.0002;
+        }
+
+        // Animate geometric shapes
+        geometricShapes.forEach(shape => {
+            shape.rotation.x += shape.userData.rotationSpeed.x;
+            shape.rotation.y += shape.userData.rotationSpeed.y;
+        });
+
+        // Camera movement based on mouse
+        camera.position.x += (mouseX * 0.05 - camera.position.x) * 0.05;
+        camera.position.y += (-mouseY * 0.05 - camera.position.y) * 0.05;
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera);
+    } catch (error) {
+        console.error('Animation error:', error);
+        cancelAnimationFrame(animationId);
     }
-
-    // Animate geometric shapes
-    geometricShapes.forEach(shape => {
-        shape.rotation.x += shape.userData.rotationSpeed.x;
-        shape.rotation.y += shape.userData.rotationSpeed.y;
-    });
-
-    // Camera movement based on mouse
-    camera.position.x += (mouseX * 0.05 - camera.position.x) * 0.05;
-    camera.position.y += (-mouseY * 0.05 - camera.position.y) * 0.05;
-    camera.lookAt(scene.position);
-
-    renderer.render(scene, camera);
 }
 
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+}Cleanup function
+function cleanupThreeScene() {
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+    }
+    if (renderer) {
+        renderer.dispose();
+    }
+    isInitialized = false;
 }
 
-function onMouseMove(event) {
-    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-    mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+// Initialize when DOM is ready (only once)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Small delay to ensure canvas is ready
+        setTimeout(initThreeScene, 100);
+    }, { once: true });
+} else {
+    setTimeout(initThreeScene, 100);
 }
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', cleanupThreeScene);
 
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
