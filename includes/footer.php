@@ -1,10 +1,18 @@
-</div>
-    <footer class="bg-dark text-white text-center py-3 mt-4">
-        <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Portfolio MMI - Anthony M.</p>
-        </div>
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/script.js"></script>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="footer-3d">
+            <div class="footer-links">
+                <a href="index.php">Accueil</a>
+                <a href="projects.php">Projets</a>
+                <a href="journey.php">Parcours</a>
+                <a href="contact.php">Contact</a>
+            </div>
+            <p>&copy; <?php echo date('Y'); ?> Portfolio MMI - Anthony M. | Créé avec <i class="bi bi-heart-fill" style="color: #c77dff;"></i></p>
+        </footer>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@ if (!isset($_SESSION['loggedin'])) {
 }
 
 $pageTitle = "Add New Project";
-include '../includes/header.php';
+include 'includes/header.php';
 include '../includes/db.php';
 
 $errors = [];
@@ -22,20 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Validate inputs
     if (empty($title)) {
-        $errors[] = 'Title is required';
+        $errors[] = 'Le titre est requis';
     }
     
     if (empty($description)) {
-        $errors[] = 'Description is required';
+        $errors[] = 'La description est requise';
     }
-    
-    // Validate image paths
-    // foreach ($image_paths as $path) {
-    //     if (!empty($path) && !filter_var($path, FILTER_VALIDATE_URL) && !preg_match('/^\/[a-z0-9\/._-]+\.(jpg|jpeg|png|gif)$/i', $path)) {
-    //         $errors[] = "Invalid image path: $path. Use full URLs or server paths starting with /";
-    //         break;
-    //     }
-    // }
     
     if (empty($errors)) {
         $pdo->beginTransaction();
@@ -57,102 +49,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->commit();
             $success = true;
             // Reset form fields
-            $title = $description = $category = $project_url = $image_paths = '';
+            $title = $description = $category = $project_url = '';
+            $image_paths = [];
         } catch (Exception $e) {
             $pdo->rollBack();
-            $errors[] = 'There was an error saving the project: ' . $e->getMessage();
+            $errors[] = 'Erreur lors de l\'enregistrement: ' . $e->getMessage();
         }
     }
 }
 ?>
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h4>Add New Project</h4>
+<h1 class="page-title">Ajouter Projet</h1>
+<p class="page-subtitle">Créez un nouveau projet pour votre portfolio</p>
+
+<section class="contact-section">
+    <div class="contact-form" style="max-width: 800px;">
+        <?php if ($success): ?>
+            <div class="alert-3d success">
+                <i class="bi bi-check-circle"></i>
+                Projet ajouté avec succès!
             </div>
-            <div class="card-body">
-                <?php if ($success): ?>
-                    <div class="alert alert-success">Project added successfully!</div>
-                <?php endif; ?>
-                
-                <?php if (!empty($errors)): ?>
-                    <div class="alert alert-danger">
-                        <ul>
-                            <?php foreach ($errors as $error): ?>
-                                <li><?php echo $error; ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endif; ?>
-                
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Project Title</label>
-                        <input type="text" class="form-control" id="title" name="title" value="<?php echo htmlspecialchars($title ?? ''); ?>" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="5" required><?php echo htmlspecialchars($description ?? ''); ?></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Category</label>
-                        <input type="text" class="form-control" id="category" name="category" value="<?php echo htmlspecialchars($category ?? ''); ?>">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="project_url" class="form-label">Project URL (optional)</label>
-                        <input type="url" class="form-control" id="project_url" name="project_url" value="<?php echo htmlspecialchars($project_url ?? ''); ?>">
-                    </div>
-                    
-                    <!-- Image paths input -->
-                    <div class="mb-3">
-                        <label for="image_paths" class="form-label">Image Paths/URLs (one per line)</label>
-                        <textarea class="form-control" id="image_paths" name="image_paths" rows="3" placeholder="https://example.com/image1.jpg&#10;/assets/images/project1.png&#10;https://i.imgur.com/abc123.jpg"><?php 
-                            if (!empty($image_paths)) {
-                                echo htmlspecialchars(implode("\n", $image_paths));
-                            }
-                        ?></textarea>
-                        <small class="text-muted">
-                            Enter one image path per line. Can be full URLs (https://...) or server paths (/path/to/image.jpg)
-                        </small>
-                        <div id="imagePreviews" class="row g-2 mt-2"></div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Add Project</button>
-                    <a href="dashboard.php" class="btn btn-secondary">Cancel</a>
-                </form>
+        <?php endif; ?>
+        
+        <?php if (!empty($errors)): ?>
+            <div class="alert-3d error">
+                <i class="bi bi-exclamation-triangle"></i>
+                <ul style="margin: 0; padding-left: 1rem;">
+                    <?php foreach ($errors as $error): ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
-        </div>
+        <?php endif; ?>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="title"><i class="bi bi-type"></i> Titre du Projet</label>
+                <input type="text" class="form-input" id="title" name="title" 
+                       value="<?php echo htmlspecialchars($title ?? ''); ?>" required
+                       placeholder="Entrez le titre du projet">
+            </div>
+            
+            <div class="form-group">
+                <label for="description"><i class="bi bi-text-paragraph"></i> Description</label>
+                <textarea class="form-input" id="description" name="description" rows="5" required
+                          placeholder="Décrivez votre projet..."><?php echo htmlspecialchars($description ?? ''); ?></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="category"><i class="bi bi-tag"></i> Catégorie</label>
+                <input type="text" class="form-input" id="category" name="category" 
+                       value="<?php echo htmlspecialchars($category ?? ''); ?>"
+                       placeholder="Ex: Web, Design, Vidéo...">
+            </div>
+            
+            <div class="form-group">
+                <label for="project_url"><i class="bi bi-link-45deg"></i> URL du Projet (optionnel)</label>
+                <input type="url" class="form-input" id="project_url" name="project_url" 
+                       value="<?php echo htmlspecialchars($project_url ?? ''); ?>"
+                       placeholder="https://exemple.com/projet">
+            </div>
+            
+            <div class="form-group">
+                <label for="image_paths"><i class="bi bi-images"></i> Chemins des Images (un par ligne)</label>
+                <textarea class="form-input" id="image_paths" name="image_paths" rows="3" 
+                          placeholder="https://exemple.com/image1.jpg&#10;assets/images/projet1.png"><?php 
+                    if (!empty($image_paths)) {
+                        echo htmlspecialchars(implode("\n", $image_paths));
+                    }
+                ?></textarea>
+                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                    Entrez un chemin d'image par ligne. URLs complètes ou chemins relatifs.
+                </small>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button type="submit" class="btn-3d btn-3d-large">
+                    <i class="bi bi-plus-circle"></i> Ajouter Projet
+                </button>
+                <a href="dashboard.php" class="btn-3d btn-3d-outline btn-3d-large">
+                    <i class="bi bi-x-circle"></i> Annuler
+                </a>
+            </div>
+        </form>
     </div>
-</div>
+</section>
 
-<script>
-// Live preview for image paths
-document.getElementById('image_paths').addEventListener('input', function() {
-    const previewContainer = document.getElementById('imagePreviews');
-    previewContainer.innerHTML = '';
-    
-    const paths = this.value.split('\n').filter(path => path.trim() !== '');
-    
-    paths.forEach((path, index) => {
-        const col = document.createElement('div');
-        col.className = 'col-md-3 col-6';
-        col.innerHTML = `
-            <div class="card h-100">
-                <img src="${path.trim()}" class="card-img-top" style="height: 120px; object-fit: cover;" 
-                     onerror="this.onerror=null;this.src='/portfolio/assets/images/image-placeholder.png';">
-                <div class="card-body p-2">
-                    <small class="text-muted d-block text-truncate">${path.trim()}</small>
-                </div>
-            </div>
-        `;
-        previewContainer.appendChild(col);
-    });
-});
-</script>
-
-<?php include '../includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>

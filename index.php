@@ -4,56 +4,109 @@ include 'includes/header.php';
 include 'includes/db.php';
 ?>
 
-<h1>Bienvenue sur mon Portfolio</h1>
-<p> Je suis Anthony Muraccioli, étudiant en Métiers du Multimédia et de l'Internet à l'IUT de Corte.<br><br> Mes intêrets se portent principalement sur l'informatique et le développement d'applications & de sites web, mais ma formation
-m'a permis d'obtenir un grand panel de compétences professionnelles différentes comme la création graphique, l'audiovisuel, la communication digitale et la gestion de projet.
-<br><br>Ce site est une vitrine de l'évolution de ces compétences au fil des années.<br></p>
+<!-- Hero Section -->
+<section class="hero-section">
+    <h1 class="hero-title">Anthony Muraccioli</h1>
+    <p class="hero-subtitle">
+        Étudiant en Métiers du Multimédia et de l'Internet à l'IUT de Corte.<br>
+        Passionné par l'informatique, le développement web, la création graphique, 
+        l'audiovisuel et la communication digitale.
+    </p>
+    <div class="hero-buttons">
+        <a href="journey.php" class="btn-3d btn-3d-large">
+            <i class="bi bi-signpost-2"></i> Découvrir mon Parcours
+        </a>
+        <a href="projects.php" class="btn-3d btn-3d-cyan btn-3d-large">
+            <i class="bi bi-collection"></i> Voir mes Projets
+        </a>
+    </div>
+</section>
 
-<a href="journey.php" class="btn btn-primary btn-lg mt-3">Découvrez mon parcours</a>
-
-<br><br><br>
-<p class="lead">Mes derniers projets ajoutés : </p>
-
-<div class="row mt-5">
-    <?php
-    $stmt = $pdo->query("
-        SELECT p.*, pi.image_path 
-        FROM projects p
-        LEFT JOIN (
-            SELECT project_id, MIN(image_path) as image_path 
-            FROM project_images 
-            GROUP BY project_id
-        ) pi ON p.id = pi.project_id
-        ORDER BY p.created_at DESC 
-        LIMIT 3
-    ");
+<!-- Latest Projects Section -->
+<section class="latest-projects">
+    <h2 class="section-title"><i class="bi bi-stars"></i> Derniers Projets</h2>
     
-    while ($project = $stmt->fetch()) {
-        echo '<div class="col-md-4 mb-4">';
-        echo '  <div class="card h-100">';
+    <div class="projects-grid">
+        <?php
+        // Fetch latest 3 projects with all their images
+        $stmt = $pdo->query("
+            SELECT p.* FROM projects p
+            ORDER BY p.created_at DESC 
+            LIMIT 3
+        ");
         
-        // Show first image if available
-        if (!empty($project['image_path'])) {
-            echo '    <img src="' . $project['image_path'] . '" class="card-img-top" style="height: 200px; object-fit: cover;" alt="' . htmlspecialchars($project['title']) . '">';
-        } else {
-            echo '    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">';
-            echo '      <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>';
+        while ($project = $stmt->fetch()) {
+            // Get all images for this project
+            $imgStmt = $pdo->prepare("SELECT image_path FROM project_images WHERE project_id = ? ORDER BY sort_order");
+            $imgStmt->execute([$project['id']]);
+            $images = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
+            
+            echo '<div class="flip-card">';
+            echo '  <div class="flip-card-inner">';
+            
+            // Front - Carousel
+            echo '    <div class="flip-card-front">';
+            echo '      <div class="carousel-container">';
+            echo '        <div class="carousel-images">';
+            
+            if (!empty($images)) {
+                foreach ($images as $img) {
+                    echo '          <img src="' . htmlspecialchars($img) . '" alt="' . htmlspecialchars($project['title']) . '">';
+                }
+            } else {
+                echo '          <div class="no-image-placeholder"><i class="bi bi-image"></i></div>';
+            }
+            
+            echo '        </div>';
+            
+            // Carousel navigation (only if multiple images)
+            if (count($images) > 1) {
+                echo '        <button class="carousel-nav prev"><i class="bi bi-chevron-left"></i></button>';
+                echo '        <button class="carousel-nav next"><i class="bi bi-chevron-right"></i></button>';
+                echo '        <div class="carousel-dots">';
+                foreach ($images as $index => $img) {
+                    echo '          <button class="dot' . ($index === 0 ? ' active' : '') . '"></button>';
+                }
+                echo '        </div>';
+            }
+            
+            echo '      </div>';
+            echo '      <div class="card-title-overlay">';
+            echo '        <h3>' . htmlspecialchars($project['title']) . '</h3>';
+            echo '        <span class="flip-hint"><i class="bi bi-arrow-repeat"></i> Cliquer pour retourner</span>';
+            echo '      </div>';
             echo '    </div>';
+            
+            // Back - Info
+            echo '    <div class="flip-card-back">';
+            echo '      <h3>' . htmlspecialchars($project['title']) . '</h3>';
+            if (!empty($project['category'])) {
+                echo '      <span class="project-category">' . htmlspecialchars($project['category']) . '</span>';
+            }
+            echo '      <p class="project-description">' . htmlspecialchars($project['description']) . '</p>';
+            echo '      <div class="project-actions">';
+            echo '        <a href="project_detail.php?id=' . $project['id'] . '" class="btn-3d btn-3d-small" onclick="event.stopPropagation();">';
+            echo '          <i class="bi bi-eye"></i> Voir Détails';
+            echo '        </a>';
+            if (!empty($project['project_url'])) {
+                echo '        <a href="' . htmlspecialchars($project['project_url']) . '" class="btn-3d btn-3d-cyan btn-3d-small" target="_blank" onclick="event.stopPropagation();">';
+                echo '          <i class="bi bi-box-arrow-up-right"></i> Lien';
+                echo '        </a>';
+            }
+            echo '      </div>';
+            echo '    </div>';
+            
+            echo '  </div>';
+            echo '</div>';
         }
-        
-        echo '    <div class="card-body">';
-        echo '      <h5 class="card-title">' . htmlspecialchars($project['title']) . '</h5>';
-        echo '      <p class="card-text">' . substr(htmlspecialchars($project['description']), 0, 100) . '...</p>';
-        echo '      <a href="project_detail.php?id=' . $project['id'] . '" class="btn btn-primary">Voir Projet</a>';
-        echo '    </div>';
-        echo '  </div>';
-        echo '</div>';
-    }
-    ?>
-</div>
-
-<br>
-
-<a href="projects.php" class="btn btn-primary btn-lg mt-3">Voir la liste complète des Projets</a>
+        ?>
+    </div>
+    
+    <div class="center-buttons">
+        <a href="projects.php" class="btn-3d btn-3d-large">
+            <i class="bi bi-grid-3x3-gap"></i> Voir Tous les Projets
+        </a>
+    </div>
+</section>
 
 <?php include 'includes/footer.php'; ?>

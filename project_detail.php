@@ -13,7 +13,7 @@ $stmt->execute([$_GET['id']]);
 $project = $stmt->fetch();
 
 if (!$project) {
-    echo '<div class="alert alert-danger">Project not found!</div>';
+    echo '<div class="alert-3d error"><i class="bi bi-exclamation-triangle"></i> Projet non trouvé!</div>';
     include 'includes/footer.php';
     exit;
 }
@@ -24,108 +24,70 @@ $stmt->execute([$_GET['id']]);
 $images = $stmt->fetchAll();
 ?>
 
-<div class="row">
+<div class="project-detail-grid">
     <!-- Image Carousel -->
-    <div class="col-lg-7">
-        <?php if (!empty($images)): ?>
-            <div id="projectCarousel" class="carousel slide shadow rounded" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <?php foreach ($images as $key => $image): ?>
-                        <button type="button" data-bs-target="#projectCarousel" 
-                                data-bs-slide-to="<?= $key ?>" 
-                                class="<?= $key === 0 ? 'active' : '' ?>"
-                                aria-label="Slide <?= $key + 1 ?>"></button>
-                    <?php endforeach; ?>
-                </div>
+    <div class="project-carousel-container">
+        <div class="project-carousel-large">
+            <?php if (!empty($images)): ?>
+                <img src="<?= htmlspecialchars($images[0]['image_path']) ?>" class="main-image" alt="<?= htmlspecialchars($project['title']) ?>">
                 
-                <div class="carousel-inner rounded-3">
-                    <?php foreach ($images as $key => $image): ?>
-                        <div class="carousel-item <?= $key === 0 ? 'active' : '' ?>">
-                            <img src="<?= $image['image_path'] ?>" class="d-block w-100" alt="Project image <?= $key + 1 ?>" style="max-height: 500px; object-fit: contain;">
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-                
-                <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
-            
-            <!-- Thumbnail navigation -->
-            <div class="row g-2 mt-2">
-                <?php foreach ($images as $key => $image): ?>
-                    <div class="col-3 col-md-2">
-                        <img src="<?= $image['image_path'] ?>" 
-                             class="img-thumbnail cursor-pointer" 
-                             style="height: 80px; width: 100%; object-fit: cover;"
-                             onclick="goToSlide(<?= $key ?>)">
+                <?php if (count($images) > 1): ?>
+                    <div class="carousel-controls">
+                        <button class="carousel-nav prev"><i class="bi bi-chevron-left"></i></button>
+                        <button class="carousel-nav next"><i class="bi bi-chevron-right"></i></button>
                     </div>
+                <?php endif; ?>
+            <?php else: ?>
+                <div class="no-image-placeholder main-image">
+                    <i class="bi bi-image"></i>
+                </div>
+            <?php endif; ?>
+        </div>
+        
+        <?php if (count($images) > 1): ?>
+            <div class="thumbnail-strip">
+                <?php foreach ($images as $key => $image): ?>
+                    <img src="<?= htmlspecialchars($image['image_path']) ?>" 
+                         alt="Thumbnail <?= $key + 1 ?>"
+                         class="<?= $key === 0 ? 'active' : '' ?>">
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>
     
-    <!-- Project Details -->
-    <div class="col-lg-5 mt-4 mt-lg-0">
-        <div class="card h-100">
-            <div class="card-body">
-                <h1 class="card-title"><?= htmlspecialchars($project['title']) ?></h1>
-                
-                <ul class="list-group list-group-flush mb-3">
-                    <?php if ($project['category']): ?>
-                        <li class="list-group-item">
-                            <strong>Catégorie:</strong> <?= htmlspecialchars($project['category']) ?>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-                
-                <?php if ($project['project_url']): ?>
-                    <a href="<?= htmlspecialchars($project['project_url']) ?>" class="btn btn-primary" target="_blank">
-                        Lien du Projet
-                    </a>
-                <?php endif; ?>
-                <br>
-                <br>
-                <div class="card-text mb-4"><?= nl2br(htmlspecialchars($project['description'])) ?></div>
-            </div>
+    <!-- Project Info Panel -->
+    <div class="project-info-panel">
+        <h1><?= htmlspecialchars($project['title']) ?></h1>
+        
+        <div class="project-meta">
+            <?php if ($project['category']): ?>
+                <span class="meta-item">
+                    <i class="bi bi-tag"></i>
+                    <?= htmlspecialchars($project['category']) ?>
+                </span>
+            <?php endif; ?>
+            <span class="meta-item">
+                <i class="bi bi-calendar3"></i>
+                <?= date('d/m/Y', strtotime($project['created_at'])) ?>
+            </span>
+        </div>
+        
+        <?php if ($project['project_url']): ?>
+            <a href="<?= htmlspecialchars($project['project_url']) ?>" class="btn-3d btn-3d-cyan" target="_blank">
+                <i class="bi bi-box-arrow-up-right"></i> Voir le Projet en Ligne
+            </a>
+        <?php endif; ?>
+        
+        <div class="project-description-full" style="margin-top: 1.5rem;">
+            <?= nl2br(htmlspecialchars($project['description'])) ?>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <a href="projects.php" class="btn-3d btn-3d-outline">
+                <i class="bi bi-arrow-left"></i> Retour aux Projets
+            </a>
         </div>
     </div>
 </div>
-
-<script>
-// Make sure Bootstrap JS is loaded
-if (typeof bootstrap === 'undefined') {
-    console.error('Bootstrap JS not loaded!');
-} else {
-    document.addEventListener('DOMContentLoaded', function() {
-        const projectCarousel = document.getElementById('projectCarousel');
-        if (projectCarousel) {
-            const myCarousel = new bootstrap.Carousel(projectCarousel);
-            
-            // Make function globally available
-            window.goToSlide = function(index) {
-                myCarousel.to(index);
-            };
-            
-            // Optional: Highlight active thumbnail
-            myCarousel._element.addEventListener('slid.bs.carousel', function() {
-                const thumbnails = document.querySelectorAll('.img-thumbnail');
-                const activeIndex = [...this.querySelectorAll('.carousel-item')].findIndex(
-                    item => item.classList.contains('active')
-                );
-                
-                thumbnails.forEach((thumb, i) => {
-                    thumb.style.border = i === activeIndex ? '3px solid #0d6efd' : '1px solid #dee2e6';
-                });
-            });
-        }
-    });
-}
-</script>
 
 <?php include 'includes/footer.php'; ?>

@@ -1,6 +1,13 @@
 <?php
 session_start();
 
+// Handle logout
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: login.php');
+    exit;
+}
+
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header('Location: dashboard.php');
     exit;
@@ -17,40 +24,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: dashboard.php');
         exit;
     } else {
-        $error = 'Invalid username or password';
+        $error = 'Nom d\'utilisateur ou mot de passe invalide';
     }
 }
 ?>
 
 <?php 
 $pageTitle = "Admin Login";
-include '../includes/header.php'; 
+include 'includes/header.php'; 
 ?>
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h4>Admin Login</h4>
+<h1 class="page-title">Admin Login</h1>
+<p class="page-subtitle">Connectez-vous pour gérer votre portfolio</p>
+
+<section class="contact-section">
+    <div class="contact-form">
+        <?php if ($error): ?>
+            <div class="alert-3d error">
+                <i class="bi bi-exclamation-triangle"></i>
+                <?php echo $error; ?>
             </div>
-            <div class="card-body">
-                <?php if ($error): ?>
-                    <div class="alert alert-danger"><?php echo $error; ?></div>
-                <?php endif; ?>
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>
+        <?php endif; ?>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="username"><i class="bi bi-person"></i> Nom d'utilisateur</label>
+                <input type="text" class="form-input" id="username" name="username" required placeholder="Entrez votre nom d'utilisateur">
             </div>
+            
+            <div class="form-group">
+                <label for="password"><i class="bi bi-lock"></i> Mot de passe</label>
+                <input type="password" class="form-input" id="password" name="password" required placeholder="Entrez votre mot de passe">
+            </div>
+            
+            <button type="submit" class="btn-3d btn-3d-large btn-3d-block">
+                <i class="bi bi-box-arrow-in-right"></i> Se Connecter
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="../index.php" class="btn-3d btn-3d-outline">
+                <i class="bi bi-arrow-left"></i> Retour au Site
+            </a>
         </div>
     </div>
-</div>
+</section>
 
-<?php include '../includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>
