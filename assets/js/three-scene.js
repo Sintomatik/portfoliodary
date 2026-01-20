@@ -52,23 +52,23 @@ function initThreeScene() {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x6b4fd9, 0.5);
-    scene.add(ambientLight);
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x6b4fd9, 0.5);
+        scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0x9d4edd, 2, 100);
-    pointLight1.position.set(20, 20, 20);
-    scene.add(pointLight1);
+        const pointLight1 = new THREE.PointLight(0x9d4edd, 2, 100);
+        pointLight1.position.set(20, 20, 20);
+        scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0x7b2cbf, 2, 100);
-    pointLight2.position.set(-20, -20, 20);
-    scene.add(pointLight2);
+        const pointLight2 = new THREE.PointLight(0x7b2cbf, 2, 100);
+        pointLight2.position.set(-20, -20, 20);
+        scene.add(pointLight2);
 
-    // Create particle system
-    createParticles();
+        // Create particle system
+        createParticles();
 
-    // Create geometric shapes
-    createGeometricShapes();
+        // Create geometric shapes
+        createGeometricShapes();
 
         // Event listeners
         window.addEventListener('resize', onWindowResize);
@@ -129,7 +129,6 @@ function createParticles() {
 }
 
 function createGeometricShapes() {
-    // Floating geometric shapes
     const geometries = [
         new THREE.TetrahedronGeometry(2),
         new THREE.OctahedronGeometry(2),
@@ -172,19 +171,16 @@ function animate() {
     animationId = requestAnimationFrame(animate);
 
     try {
-        // Rotate particles
         if (particles) {
             particles.rotation.y += 0.0005;
             particles.rotation.x += 0.0002;
         }
 
-        // Animate geometric shapes
-        geometricShapes.forEach(shape => {
+        geometricShapes.forEach(function(shape) {
             shape.rotation.x += shape.userData.rotationSpeed.x;
             shape.rotation.y += shape.userData.rotationSpeed.y;
         });
 
-        // Camera movement based on mouse
         camera.position.x += (mouseX * 0.05 - camera.position.x) * 0.05;
         camera.position.y += (-mouseY * 0.05 - camera.position.y) * 0.05;
         camera.lookAt(scene.position);
@@ -207,7 +203,6 @@ function onMouseMove(event) {
     mouseY = (event.clientY / window.innerHeight) * 2 - 1;
 }
 
-// Cleanup function
 function cleanupThreeScene() {
     if (animationId) {
         cancelAnimationFrame(animationId);
@@ -221,7 +216,7 @@ function cleanupThreeScene() {
 // Cleanup on page unload
 window.addEventListener('beforeunload', cleanupThreeScene);
 
-// Initialize when window fully loads (ensures Three.js library is available)
+// Initialize when window fully loads
 window.addEventListener('load', function() {
     if (typeof THREE !== 'undefined') {
         setTimeout(initThreeScene, 100);
