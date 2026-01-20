@@ -216,11 +216,21 @@ function cleanupThreeScene() {
 // Cleanup on page unload
 window.addEventListener('beforeunload', cleanupThreeScene);
 
-// Initialize when window fully loads
-window.addEventListener('load', function() {
+// Initialize Three.js scene
+function tryInitThreeScene() {
     if (typeof THREE !== 'undefined') {
-        setTimeout(initThreeScene, 100);
+        initThreeScene();
     } else {
-        console.warn('Three.js library not loaded');
+        console.warn('Three.js library not loaded, retrying...');
+        setTimeout(tryInitThreeScene, 200);
     }
-});
+}
+
+// Wait for document to be ready, then initialize
+if (document.readyState === 'complete') {
+    setTimeout(tryInitThreeScene, 100);
+} else {
+    window.addEventListener('load', function() {
+        setTimeout(tryInitThreeScene, 100);
+    });
+}
