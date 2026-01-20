@@ -17,7 +17,7 @@ include 'includes/db.php';
         $imgStmt->execute([$project['id']]);
         $images = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
         
-        echo '<a href="project_detail.php?id=' . $project['id'] . '" class="flip-card card-3d-target project-card-link">';
+        echo '<div class="flip-card card-3d-target">';
         echo '  <div class="flip-card-inner">';
         
         // Front - Carousel
@@ -37,11 +37,11 @@ include 'includes/db.php';
         
         // Carousel navigation (only if multiple images)
         if (count($images) > 1) {
-            echo '        <button class="carousel-nav prev" onclick="event.preventDefault(); event.stopPropagation();"><i class="bi bi-chevron-left"></i></button>';
-            echo '        <button class="carousel-nav next" onclick="event.preventDefault(); event.stopPropagation();"><i class="bi bi-chevron-right"></i></button>';
+            echo '        <button class="carousel-nav prev"><i class="bi bi-chevron-left"></i></button>';
+            echo '        <button class="carousel-nav next"><i class="bi bi-chevron-right"></i></button>';
             echo '        <div class="carousel-dots">';
             foreach ($images as $index => $img) {
-                echo '          <button class="dot' . ($index === 0 ? ' active' : '') . '" onclick="event.preventDefault(); event.stopPropagation();"></button>';
+                echo '          <button class="dot' . ($index === 0 ? ' active' : '') . '"></button>';
             }
             echo '        </div>';
         }
@@ -49,20 +49,31 @@ include 'includes/db.php';
         echo '      </div>';
         echo '      <div class="card-title-overlay">';
         echo '        <h3>' . htmlspecialchars($project['title']) . '</h3>';
+        echo '        <span class="flip-hint"><i class="bi bi-arrow-repeat"></i> Cliquer pour retourner</span>';
         echo '      </div>';
         echo '    </div>';
         
-        // Back - Info (no longer used for flip, but kept for styling)
+        // Back - Info
         echo '    <div class="flip-card-back">';
         echo '      <h3>' . htmlspecialchars($project['title']) . '</h3>';
         if (!empty($project['category'])) {
             echo '      <span class="project-category">' . htmlspecialchars($project['category']) . '</span>';
         }
         echo '      <p class="project-description">' . htmlspecialchars($project['description']) . '</p>';
+        echo '      <div class="project-actions">';
+        echo '        <a href="project_detail.php?id=' . $project['id'] . '" class="btn-3d btn-3d-small" onclick="event.stopPropagation();">';
+        echo '          <i class="bi bi-eye"></i> Voir Détails';
+        echo '        </a>';
+        if (!empty($project['project_url'])) {
+            echo '        <a href="' . htmlspecialchars($project['project_url']) . '" class="btn-3d btn-3d-cyan btn-3d-small" target="_blank" onclick="event.stopPropagation();">';
+            echo '          <i class="bi bi-box-arrow-up-right"></i> Lien';
+            echo '        </a>';
+        }
+        echo '      </div>';
         echo '    </div>';
         
         echo '  </div>';
-        echo '</a>';
+        echo '</div>';
     }
     ?>
 </div>
