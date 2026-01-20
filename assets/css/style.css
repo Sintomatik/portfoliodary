@@ -185,6 +185,206 @@ body {
     100% { filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5)); }
 }
 
+/* ============================================
+   FLASHY NAME EFFECT
+   ============================================ */
+.flashy-name {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem;
+}
+
+.flashy-name .letter-wrap {
+    display: flex;
+    justify-content: center;
+}
+
+.flashy-name .letter {
+    display: inline-block;
+    font-size: 4.5rem;
+    font-weight: 900;
+    background: linear-gradient(
+        135deg,
+        var(--accent-purple) 0%,
+        var(--accent-pink) 25%,
+        var(--accent-cyan) 50%,
+        var(--accent-pink) 75%,
+        var(--accent-purple) 100%
+    );
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: 
+        letterWave 0.8s ease-in-out calc(var(--i) * 0.05s) infinite alternate,
+        gradientShift 4s ease infinite,
+        letterGlow 2s ease-in-out calc(var(--i) * 0.1s) infinite;
+    text-shadow: none;
+    filter: drop-shadow(0 0 10px rgba(123, 44, 191, 0.5));
+    transition: transform 0.3s ease;
+}
+
+.flashy-name .letter:hover {
+    animation: letterPop 0.4s ease forwards, gradientShift 4s ease infinite;
+    transform: scale(1.3) rotate(5deg);
+}
+
+.flashy-name .name-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(123, 44, 191, 0.4) 0%,
+        rgba(0, 212, 255, 0.2) 30%,
+        transparent 70%
+    );
+    filter: blur(40px);
+    animation: glowPulse 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.flashy-name .name-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.flashy-name .name-particles::before,
+.flashy-name .name-particles::after {
+    content: '✦';
+    position: absolute;
+    font-size: 1.5rem;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+.flashy-name .name-particles::before {
+    top: 10%;
+    left: 5%;
+    color: var(--accent-cyan);
+    animation-delay: 0s;
+}
+
+.flashy-name .name-particles::after {
+    bottom: 10%;
+    right: 5%;
+    color: var(--accent-pink);
+    animation-delay: 1s;
+}
+
+@keyframes letterWave {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-8px) rotate(2deg);
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes letterGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px rgba(123, 44, 191, 0.5));
+    }
+    50% {
+        filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8)) drop-shadow(0 0 40px rgba(199, 125, 255, 0.5));
+    }
+}
+
+@keyframes letterPop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.4) rotate(-5deg);
+    }
+    100% {
+        transform: scale(1.2) rotate(3deg);
+    }
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.5) rotate(0deg);
+    }
+    25% {
+        opacity: 1;
+        transform: scale(1.2) rotate(180deg);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1) rotate(360deg);
+    }
+    75% {
+        opacity: 1;
+        transform: scale(1.3) rotate(540deg);
+    }
+}
+
+/* Electric arc effect between letters on hover */
+.flashy-name:hover .letter {
+    animation: 
+        electricPulse 0.15s ease-in-out calc(var(--i) * 0.03s) infinite,
+        gradientShift 2s ease infinite;
+}
+
+@keyframes electricPulse {
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+        filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.9));
+    }
+    25% {
+        transform: translateX(-2px) translateY(-1px);
+    }
+    50% {
+        filter: drop-shadow(0 0 25px rgba(199, 125, 255, 1)) drop-shadow(0 0 50px rgba(0, 212, 255, 0.8));
+    }
+    75% {
+        transform: translateX(2px) translateY(1px);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .flashy-name .letter {
+        font-size: 2.5rem;
+    }
+}
+
 .page-subtitle {
     text-align: center;
     color: var(--text-secondary);
@@ -1197,6 +1397,32 @@ textarea.form-input {
     z-index: 10;
 }
 
+/* Glow effect on wrapper, not on flip-card */
+.flip-card-3d-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, 
+        var(--accent-purple) 0%, 
+        var(--accent-cyan) 50%, 
+        var(--accent-pink) 100%);
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    filter: blur(10px);
+}
+
+.flip-card-3d-wrapper.is-hovered-3d::before {
+    opacity: 0.7;
+    animation: borderPulse 2s ease-in-out infinite;
+}
+
+/* Remove glow from flip-card itself to prevent bleed-through */
+.flip-card.card-3d-target::before {
+    display: none;
+}
+
 /* Depth indicator with corner glows */
 .depth-indicator-3d {
     position: absolute;
@@ -1206,10 +1432,17 @@ textarea.form-input {
     opacity: 0;
     transition: opacity 0.3s ease;
     border-radius: inherit;
+    backface-visibility: hidden;
 }
 
-.is-hovered-3d .depth-indicator-3d,
-.card-3d-target:hover .depth-indicator-3d {
+/* Hide depth indicators during flip animation */
+.flip-card.flipped ~ .depth-indicator-3d,
+.flip-card-3d-wrapper:has(.flip-card.flipped) .depth-indicator-3d {
+    opacity: 0 !important;
+}
+
+.is-hovered-3d > .depth-indicator-3d,
+.card-3d-target:hover > .depth-indicator-3d {
     opacity: 1;
 }
 

@@ -6,7 +6,16 @@ include 'includes/db.php';
 
 <!-- Hero Section -->
 <section class="hero-section">
-    <h1 class="hero-title">Anthony Muraccioli</h1>
+    <h1 class="hero-title flashy-name">
+        <span class="letter-wrap">
+            <span class="letter" style="--i:0">A</span><span class="letter" style="--i:1">n</span><span class="letter" style="--i:2">t</span><span class="letter" style="--i:3">h</span><span class="letter" style="--i:4">o</span><span class="letter" style="--i:5">n</span><span class="letter" style="--i:6">y</span>
+        </span>
+        <span class="letter-wrap">
+            <span class="letter" style="--i:7">M</span><span class="letter" style="--i:8">u</span><span class="letter" style="--i:9">r</span><span class="letter" style="--i:10">a</span><span class="letter" style="--i:11">c</span><span class="letter" style="--i:12">c</span><span class="letter" style="--i:13">i</span><span class="letter" style="--i:14">o</span><span class="letter" style="--i:15">l</span><span class="letter" style="--i:16">i</span>
+        </span>
+        <div class="name-glow"></div>
+        <div class="name-particles"></div>
+    </h1>
     <p class="hero-subtitle">
         Étudiant en Métiers du Multimédia et de l'Internet à l'IUT de Corte.<br>
         Passionné par l'informatique, le développement web, la création graphique, 

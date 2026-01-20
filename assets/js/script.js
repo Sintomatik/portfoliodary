@@ -338,6 +338,199 @@ class Card3DEnhancer {
 }
 
 // ============================================
+// FLASHY NAME EFFECT
+// ============================================
+
+class FlashyNameEffect {
+    constructor() {
+        this.nameElement = document.querySelector('.flashy-name');
+        this.particlesContainer = null;
+        this.particles = [];
+        
+        if (this.nameElement) {
+            this.init();
+        }
+    }
+    
+    init() {
+        this.particlesContainer = this.nameElement.querySelector('.name-particles');
+        if (!this.particlesContainer) return;
+        
+        // Create floating particles
+        this.createParticles();
+        
+        // Add mouse interaction
+        this.nameElement.addEventListener('mousemove', (e) => this.onMouseMove(e));
+        this.nameElement.addEventListener('click', () => this.burst());
+        
+        // Start animation loop
+        this.animate();
+    }
+    
+    createParticles() {
+        const symbols = ['✦', '✧', '★', '✴', '❋', '✺', '◆', '◇'];
+        
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('span');
+            particle.className = 'floating-particle';
+            particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            particle.style.cssText = `
+                position: absolute;
+                font-size: ${Math.random() * 1 + 0.5}rem;
+                color: ${['var(--accent-cyan)', 'var(--accent-pink)', 'var(--accent-purple)', 'var(--accent-light)'][Math.floor(Math.random() * 4)]};
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                opacity: 0;
+                pointer-events: none;
+                text-shadow: 0 0 10px currentColor;
+                animation: floatParticle ${3 + Math.random() * 4}s ease-in-out ${Math.random() * 2}s infinite;
+            `;
+            this.particlesContainer.appendChild(particle);
+            this.particles.push({
+                element: particle,
+                x: Math.random() * 100,
+                y: Math.random() * 100,
+                speed: 0.2 + Math.random() * 0.3,
+                angle: Math.random() * Math.PI * 2
+            });
+        }
+        
+        // Add CSS for particle animation
+        if (!document.querySelector('#flashy-name-styles')) {
+            const style = document.createElement('style');
+            style.id = 'flashy-name-styles';
+            style.textContent = `
+                @keyframes floatParticle {
+                    0%, 100% {
+                        opacity: 0;
+                        transform: translateY(0) rotate(0deg) scale(0.5);
+                    }
+                    20% {
+                        opacity: 0.8;
+                    }
+                    50% {
+                        opacity: 1;
+                        transform: translateY(-20px) rotate(180deg) scale(1);
+                    }
+                    80% {
+                        opacity: 0.8;
+                    }
+                }
+                
+                @keyframes burstParticle {
+                    0% {
+                        opacity: 1;
+                        transform: translate(0, 0) scale(1);
+                    }
+                    100% {
+                        opacity: 0;
+                        transform: translate(var(--tx), var(--ty)) scale(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+    
+    onMouseMove(e) {
+        const rect = this.nameElement.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        // Create trail particle
+        if (Math.random() > 0.7) {
+            this.createTrailParticle(x, y);
+        }
+    }
+    
+    createTrailParticle(x, y) {
+        const particle = document.createElement('span');
+        particle.className = 'trail-particle';
+        particle.textContent = ['✦', '✧', '★'][Math.floor(Math.random() * 3)];
+        particle.style.cssText = `
+            position: absolute;
+            font-size: ${0.5 + Math.random() * 0.5}rem;
+            color: var(--accent-cyan);
+            left: ${x}%;
+            top: ${y}%;
+            pointer-events: none;
+            text-shadow: 0 0 15px var(--accent-cyan), 0 0 30px var(--accent-pink);
+            animation: trailFade 0.8s ease-out forwards;
+        `;
+        this.particlesContainer.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 800);
+        
+        // Add trail animation if not exists
+        if (!document.querySelector('#trail-styles')) {
+            const style = document.createElement('style');
+            style.id = 'trail-styles';
+            style.textContent = `
+                @keyframes trailFade {
+                    0% {
+                        opacity: 1;
+                        transform: scale(1) translateY(0);
+                    }
+                    100% {
+                        opacity: 0;
+                        transform: scale(0) translateY(-30px);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+    
+    burst() {
+        // Create burst effect on click
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('span');
+            const angle = (i / 15) * Math.PI * 2;
+            const distance = 80 + Math.random() * 60;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+            
+            particle.className = 'burst-particle';
+            particle.textContent = ['✦', '✧', '★', '✴', '❋'][Math.floor(Math.random() * 5)];
+            particle.style.cssText = `
+                position: absolute;
+                font-size: ${0.8 + Math.random() * 0.8}rem;
+                color: ${['var(--accent-cyan)', 'var(--accent-pink)', 'var(--accent-purple)'][Math.floor(Math.random() * 3)]};
+                left: 50%;
+                top: 50%;
+                pointer-events: none;
+                text-shadow: 0 0 20px currentColor;
+                --tx: ${tx}px;
+                --ty: ${ty}px;
+                animation: burstParticle 0.8s ease-out forwards;
+            `;
+            this.particlesContainer.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 800);
+        }
+    }
+    
+    animate() {
+        this.particles.forEach(p => {
+            p.angle += 0.01;
+            p.x += Math.cos(p.angle) * p.speed * 0.1;
+            p.y += Math.sin(p.angle) * p.speed * 0.1;
+            
+            // Keep within bounds
+            if (p.x < 0) p.x = 100;
+            if (p.x > 100) p.x = 0;
+            if (p.y < 0) p.y = 100;
+            if (p.y > 100) p.y = 0;
+            
+            p.element.style.left = p.x + '%';
+            p.element.style.top = p.y + '%';
+        });
+        
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// ============================================
 // FLOATING 3D DECORATIONS FOR SECTIONS
 // ============================================
 
@@ -742,6 +935,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         new Card3DEnhancer();
     }, 100);
+    
+    // Initialize flashy name effect
+    new FlashyNameEffect();
     
     // Initialize section 3D decorations
     new Section3DDecorations();
