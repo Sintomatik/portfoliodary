@@ -1,22 +1,302 @@
+/* ===== Dark Purple 3D Interface Theme ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
+    color: #e0d5f3;
+    background: linear-gradient(135deg, #0a0020 0%, #1a0933 25%, #2d0a5e 50%, #1a0933 75%, #0a0020 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
 }
 
+/* Three.js Canvas Background */
+#three-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Glassmorphism Effect */
+.glass {
+    background: rgba(157, 78, 221, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(157, 78, 221, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Navigation Bar */
 .navbar {
     margin-bottom: 20px;
+    background: rgba(26, 9, 51, 0.8) !important;
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid rgba(157, 78, 221, 0.3);
+    box-shadow: 0 4px 30px rgba(157, 78, 221, 0.2);
 }
 
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #9d4edd, #c77dff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(157, 78, 221, 0.5);
+}
+
+.nav-link {
+    color: #e0d5f3 !important;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.5rem 1rem !important;
+}
+
+.nav-link:hover {
+    color: #c77dff !important;
+    transform: translateY(-2px);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #9d4edd, #c77dff);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 80%;
+}
+
+/* Container with glass effect */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: #e0d5f3;
+    text-shadow: 0 0 20px rgba(157, 78, 221, 0.5);
+    font-weight: 600;
+}
+
+p, .lead {
+    color: #c9b8e0;
+}
+
+/* 3D Flip Card Styles */
+.flip-card-container {
+    perspective: 1000px;
+    margin-bottom: 30px;
+}
+
+.flip-card {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.flip-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.flip-card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(26, 9, 51, 0.6);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(157, 78, 221, 0.3);
+    box-shadow: 0 8px 32px rgba(157, 78, 221, 0.2);
+    transition: all 0.3s ease;
+}
+
+.flip-card-face:hover {
+    box-shadow: 0 12px 48px rgba(157, 78, 221, 0.4);
+    border-color: rgba(157, 78, 221, 0.5);
+}
+
+.flip-card-front {
+    display: flex;
+    flex-direction: column;
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* Carousel Styles for Flip Card */
+.card-carousel {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+}
+
+.card-carousel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 10%;
+    opacity: 0.7;
+    background: rgba(157, 78, 221, 0.3);
+    transition: all 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+    background: rgba(157, 78, 221, 0.5);
+}
+
+.carousel-indicators {
+    bottom: 10px;
+}
+
+.carousel-indicators [data-bs-target] {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(157, 78, 221, 0.5);
+    border: none;
+}
+
+.carousel-indicators .active {
+    background-color: #9d4edd;
+}
+
+/* Card Info Section */
+.card-info {
+    padding: 20px 30px;
+    background: rgba(26, 9, 51, 0.4);
+}
+
+.card-info h5 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #c77dff;
+}
+
+.card-info p {
+    color: #b8a5d3;
+    margin-bottom: 15px;
+}
+
+/* Flip Button */
+.flip-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
+    z-index: 10;
+}
+
+.flip-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(157, 78, 221, 0.6);
+    background: linear-gradient(135deg, #9d4edd, #c77dff);
+}
+
+/* Back Face Content */
+.back-content h3 {
+    color: #c77dff;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.back-content p {
+    color: #c9b8e0;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.back-content ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.back-content ul li {
+    color: #b8a5d3;
+    padding: 8px 0;
+    padding-left: 25px;
+    position: relative;
+}
+
+.back-content ul li::before {
+    content: '▹';
+    position: absolute;
+    left: 0;
+    color: #9d4edd;
+    font-size: 1.2rem;
+}
+
+/* Legacy Card Support */
 .card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     margin-bottom: 20px;
+    background: rgba(26, 9, 51, 0.6);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(157, 78, 221, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(157, 78, 221, 0.2);
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 48px rgba(157, 78, 221, 0.4);
+    border-color: rgba(157, 78, 221, 0.5);
+}
+
+.card-body {
+    background: rgba(26, 9, 51, 0.4);
+    color: #e0d5f3;
+}
+
+.card-title {
+    color: #c77dff;
+}
+
+.card-text {
+    color: #b8a5d3;
 }
 
 .card-img-top {
@@ -26,18 +306,111 @@ body {
 
 footer {
     margin-top: 40px;
+    background: rgba(26, 9, 51, 0.8);
+    backdrop-filter: blur(20px);
+    border-top: 2px solid rgba(157, 78, 221, 0.3);
+    padding: 30px 0;
+    color: #c9b8e0;
+}
+
+/* Buttons */
+.btn {
+    background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(157, 78, 221, 0.6);
+    background: linear-gradient(135deg, #9d4edd, #c77dff);
+    color: white;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+}
+
+.btn-lg {
+    padding: 15px 40px;
+    font-size: 1.1rem;
 }
 
 /* Admin specific styles */
 .admin-table {
     width: 100%;
     margin-top: 20px;
+    background: rgba(26, 9, 51, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 15px;
+    overflow: hidden;
 }
 
-/* Add to your existing style.css */
+.admin-table thead {
+    background: rgba(157, 78, 221, 0.3);
+}
+
+.admin-table th, .admin-table td {
+    color: #e0d5f3;
+    border-color: rgba(157, 78, 221, 0.2);
+}
+
+/* Forms */
+.form-control, .form-select {
+    background: rgba(26, 9, 51, 0.6);
+    border: 2px solid rgba(157, 78, 221, 0.3);
+    color: #e0d5f3;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    background: rgba(26, 9, 51, 0.8);
+    border-color: #9d4edd;
+    box-shadow: 0 0 20px rgba(157, 78, 221, 0.3);
+    color: #e0d5f3;
+}
+
+.form-control::placeholder {
+    color: #8a7aa0;
+}
+
+.form-label {
+    color: #c77dff;
+    font-weight: 600;
+}
+
+textarea.form-control {
+    min-height: 120px;
+}
+
+/* Project Detail Page */
 .project-description {
     line-height: 1.8;
     font-size: 1.1rem;
+    color: #c9b8e0;
 }
 
 .card.h-100 {
@@ -51,28 +424,35 @@ footer {
 }
 
 .img-fluid.rounded {
-    border-radius: 0.5rem !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 15px !important;
+    box-shadow: 0 8px 32px rgba(157, 78, 221, 0.3);
+    border: 2px solid rgba(157, 78, 221, 0.2);
 }
 
 .list-group-item {
     padding: 1rem 1.25rem;
+    background: rgba(26, 9, 51, 0.4);
+    border: 1px solid rgba(157, 78, 221, 0.2);
+    color: #c9b8e0;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .card {
-        margin-bottom: 15px;
-    }
-    .col-md-6 {
-        margin-bottom: 2rem;
-    }
+.list-group-item:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
-/* Carousel Styles */
+.list-group-item:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* Carousel Detail Page */
 #projectCarousel {
-    border: 1px solid #dee2e6;
-    background-color: #f8f9fa;
+    border: 2px solid rgba(157, 78, 221, 0.3);
+    background: rgba(26, 9, 51, 0.6);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(157, 78, 221, 0.2);
 }
 
 .carousel-indicators button {
@@ -80,18 +460,12 @@ footer {
     height: 10px;
     border-radius: 50%;
     margin: 0 5px;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(157, 78, 221, 0.5);
     border: none;
 }
 
 .carousel-indicators .active {
-    background-color: rgba(0,0,0,0.9);
-}
-
-.carousel-control-prev, .carousel-control-next {
-    width: 5%;
-    color: #000;
-    opacity: 0.8;
+    background-color: #9d4edd;
 }
 
 .cursor-pointer {
@@ -101,40 +475,14 @@ footer {
 /* Thumbnail navigation */
 .img-thumbnail {
     transition: all 0.2s ease;
+    background: rgba(26, 9, 51, 0.6);
+    border: 2px solid rgba(157, 78, 221, 0.3);
 }
 
 .img-thumbnail:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .carousel-inner img {
-        max-height: 300px !important;
-    }
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-    filter: invert(100%);
-    opacity: 0.8;
-}
-
-.carousel-control-prev:hover,
-.carousel-control-next:hover {
-    opacity: 1;
-}
-
-/* Optional: Change indicator dots to black */
-.carousel-indicators [data-bs-target] {
-    background-color: #000;
-}
-
-/* Optional: Change active indicator dot */
-.carousel-indicators .active {
-    background-color: #000;
-    opacity: 1;
+    box-shadow: 0 4px 20px rgba(157, 78, 221, 0.4);
+    border-color: #9d4edd;
 }
 
 /* Contact Page Styles */
@@ -144,7 +492,7 @@ footer {
 
 .needs-validation .invalid-feedback {
     display: none;
-    color: #dc3545;
+    color: #ff6b9d;
     font-size: 0.875em;
 }
 
@@ -153,16 +501,134 @@ footer {
 }
 
 /* Aspirations Page Styles */
+.card-header {
+    background: rgba(157, 78, 221, 0.3) !important;
+    border-bottom: 2px solid rgba(157, 78, 221, 0.4);
+}
+
 .card-header h3 {
     font-size: 1.25rem;
     margin-bottom: 0;
+    color: #e0d5f3;
 }
 
-.list-group-item {
-    border-left: 0;
-    border-right: 0;
+/* Alert Messages */
+.alert {
+    background: rgba(26, 9, 51, 0.8);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(157, 78, 221, 0.3);
+    border-radius: 15px;
+    color: #e0d5f3;
 }
 
-.list-group-item:first-child {
-    border-top: 0;
+.alert-success {
+    border-color: rgba(52, 211, 153, 0.5);
+    background: rgba(16, 185, 129, 0.1);
 }
+
+.alert-danger {
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(220, 38, 38, 0.1);
+}
+
+/* Table Styling */
+table {
+    color: #e0d5f3;
+}
+
+table thead {
+    background: rgba(157, 78, 221, 0.2);
+}
+
+table tbody tr {
+    transition: all 0.2s ease;
+}
+
+table tbody tr:hover {
+    background: rgba(157, 78, 221, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .flip-card {
+        height: 450px;
+    }
+    
+    .card-carousel {
+        height: 280px;
+    }
+    
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    .col-md-6 {
+        margin-bottom: 2rem;
+    }
+    
+    .carousel-inner img {
+        max-height: 300px !important;
+    }
+    
+    .flip-card-back {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .flip-card {
+        height: 400px;
+    }
+    
+    .card-carousel {
+        height: 220px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* Loading Animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(26, 9, 51, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #7b2cbf, #9d4edd);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #9d4edd, #c77dff);
+}
+
+/* Selection Color */
+::selection {
+    background: rgba(157, 78, 221, 0.5);
+    color: #ffffff;
+}
+
+::-moz-selection {
+    background: rgba(157, 78, 221, 0.5);
+    color: #ffffff;
+}
+

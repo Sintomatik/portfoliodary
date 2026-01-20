@@ -4,15 +4,23 @@ include 'includes/header.php';
 include 'includes/db.php';
 ?>
 
-<h1>Bienvenue sur mon Portfolio</h1>
-<p> Je suis Anthony Muraccioli, étudiant en Métiers du Multimédia et de l'Internet à l'IUT de Corte.<br><br> Mes intêrets se portent principalement sur l'informatique et le développement d'applications & de sites web, mais ma formation
-m'a permis d'obtenir un grand panel de compétences professionnelles différentes comme la création graphique, l'audiovisuel, la communication digitale et la gestion de projet.
-<br><br>Ce site est une vitrine de l'évolution de ces compétences au fil des années.<br></p>
+<div style="text-align: center; margin-bottom: 3rem;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem;">✨ Bienvenue sur mon Portfolio</h1>
+    <p class="lead" style="max-width: 800px; margin: 0 auto; font-size: 1.2rem;"> 
+        Je suis Anthony Muraccioli, étudiant en Métiers du Multimédia et de l'Internet à l'IUT de Corte.<br><br> 
+        Mes intêrets se portent principalement sur l'informatique et le développement d'applications & de sites web, 
+        mais ma formation m'a permis d'obtenir un grand panel de compétences professionnelles différentes comme 
+        la création graphique, l'audiovisuel, la communication digitale et la gestion de projet.
+        <br><br>Ce site est une vitrine de l'évolution de ces compétences au fil des années.<br>
+    </p>
 
-<a href="journey.php" class="btn btn-primary btn-lg mt-3">Découvrez mon parcours</a>
+    <a href="journey.php" class="btn btn-primary btn-lg mt-4">🚀 Découvrez mon parcours</a>
+</div>
 
-<br><br><br>
-<p class="lead">Mes derniers projets ajoutés : </p>
+<br><br>
+<p class="lead" style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;">
+    ⭐ Mes derniers projets ajoutés
+</p>
 
 <div class="row mt-5">
     <?php
@@ -36,8 +44,8 @@ m'a permis d'obtenir un grand panel de compétences professionnelles différente
         if (!empty($project['image_path'])) {
             echo '    <img src="' . $project['image_path'] . '" class="card-img-top" style="height: 200px; object-fit: cover;" alt="' . htmlspecialchars($project['title']) . '">';
         } else {
-            echo '    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">';
-            echo '      <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>';
+            echo '    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background: rgba(157, 78, 221, 0.1);">';
+            echo '      <i class="bi bi-image" style="font-size: 3rem; color: #9d4edd;"></i>';
             echo '    </div>';
         }
         
@@ -52,8 +60,10 @@ m'a permis d'obtenir un grand panel de compétences professionnelles différente
     ?>
 </div>
 
-<br>
+<div style="text-align: center; margin-top: 3rem;">
+    <a href="projects.php" class="btn btn-primary btn-lg">📂 Voir tous mes projets en 3D</a>
+</div>
 
-<a href="projects.php" class="btn btn-primary btn-lg mt-3">Voir la liste complète des Projets</a>
+<script src="assets/js/script.js"></script>
 
 <?php include 'includes/footer.php'; ?>
