@@ -611,13 +611,6 @@ class FlipCardCarousel {
             });
         });
         
-        // Flip on click (not on nav elements)
-        this.card.addEventListener('click', (e) => {
-            if (!e.target.closest('.carousel-nav') && !e.target.closest('.carousel-dots') && !e.target.closest('.btn-3d')) {
-                this.flip();
-            }
-        });
-        
         // Start autoplay
         this.startAutoPlay();
         
