@@ -1,5 +1,6 @@
 <?php 
 $pageTitle = "Projects";
+$basePath = '';
 include 'includes/header.php'; 
 include 'includes/db.php';
 ?>

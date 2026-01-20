@@ -10,8 +10,8 @@
     <!-- Three.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
     <!-- Three.js Scene Script -->
-    <script src="../assets/js/three-scene.js"></script>
+    <script src="<?php echo isset($basePath) ? $basePath : ''; ?>assets/js/three-scene.js"></script>
     <!-- Custom Scripts -->
-    <script src="../assets/js/script.js"></script>
+    <script src="<?php echo isset($basePath) ? $basePath : ''; ?>assets/js/script.js"></script>
 </body>
 </html>

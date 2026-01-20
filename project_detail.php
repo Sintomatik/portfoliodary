@@ -5,6 +5,7 @@ if (!isset($_GET['id'])) {
 }
 
 $pageTitle = "Project Details";
+$basePath = '';
 include 'includes/header.php';
 include 'includes/db.php';
 
