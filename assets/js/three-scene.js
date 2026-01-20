@@ -1,18 +1,20 @@
-(function() {
-    'use strict';
+// Three.js 3D Background Scene
+// Wait for THREE to be available before doing anything
+(function waitForThree() {
+    if (typeof THREE === 'undefined') {
+        setTimeout(waitForThree, 100);
+        return;
+    }
     
+    // THREE is now available, start initialization
     var scene, camera, renderer, particles;
     var geometricShapes = [];
     var mouseX = 0, mouseY = 0;
     var isInitialized = false;
     var animationId = null;
 
-    function initThreeScene() {
+    function init() {
         if (isInitialized) return;
-        if (typeof THREE === 'undefined') {
-            console.warn('THREE not available');
-            return;
-        }
 
         var canvas = document.getElementById('three-canvas');
         if (!canvas) {
@@ -36,6 +38,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+            // Lighting
             var ambientLight = new THREE.AmbientLight(0x6b4fd9, 0.5);
             scene.add(ambientLight);
 
@@ -54,6 +57,7 @@
             document.addEventListener('mousemove', onMouseMove);
 
             isInitialized = true;
+            console.log('Three.js initialized successfully');
             animate();
         } catch (error) {
             console.error('Three.js init error:', error);
@@ -62,7 +66,7 @@
     }
 
     function createParticles() {
-        var particleCount = 800;
+        var particleCount = 500;
         var geometry = new THREE.BufferGeometry();
         var positions = new Float32Array(particleCount * 3);
         var colors = new Float32Array(particleCount * 3);
@@ -104,12 +108,10 @@
         var geometries = [
             new THREE.TetrahedronGeometry(2),
             new THREE.OctahedronGeometry(2),
-            new THREE.IcosahedronGeometry(2),
-            new THREE.TorusGeometry(2, 0.5, 16, 100),
-            new THREE.TorusKnotGeometry(1.5, 0.4, 100, 16)
+            new THREE.IcosahedronGeometry(2)
         ];
 
-        for (var i = 0; i < 8; i++) {
+        for (var i = 0; i < 6; i++) {
             var geometry = geometries[Math.floor(Math.random() * geometries.length)];
             var material = new THREE.MeshPhongMaterial({
                 color: Math.random() > 0.5 ? 0x9d4edd : 0x7b2cbf,
@@ -167,19 +169,10 @@
         mouseY = (event.clientY / window.innerHeight) * 2 - 1;
     }
 
-    function tryInit() {
-        if (typeof THREE !== 'undefined') {
-            initThreeScene();
-        } else {
-            setTimeout(tryInit, 200);
-        }
-    }
-
-    if (document.readyState === 'complete') {
-        setTimeout(tryInit, 100);
+    // Start when DOM is ready
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        init();
     } else {
-        window.addEventListener('load', function() {
-            setTimeout(tryInit, 100);
-        });
+        document.addEventListener('DOMContentLoaded', init);
     }
 })();
