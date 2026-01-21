@@ -2,16 +2,55 @@
 $pageTitle = "Projects";
 include 'includes/header.php'; 
 include 'includes/db.php';
+
+// Get all unique categories from projects
+$catStmt = $pdo->query("SELECT DISTINCT category FROM projects WHERE category IS NOT NULL AND category != '' ORDER BY category");
+$allCategories = [];
+while ($row = $catStmt->fetch()) {
+    // Split comma-separated categories
+    $cats = explode(',', $row['category']);
+    foreach ($cats as $cat) {
+        $cat = trim($cat);
+        if (!empty($cat) && !in_array($cat, $allCategories)) {
+            $allCategories[] = $cat;
+        }
+    }
+}
+sort($allCategories);
+
+// Get selected filter
+$selectedCategory = isset($_GET['category']) ? trim($_GET['category']) : '';
 ?>
 
 <h1 class="page-title">Mes Projets</h1>
 <p class="page-subtitle">Voici l'entièreté des projets auxquels j'ai contribué pendant mes années d'études en MMI</p>
 
+<!-- Category Filter -->
+<div class="category-filter">
+    <a href="projects.php" class="filter-btn <?php echo empty($selectedCategory) ? 'active' : ''; ?>">
+        <i class="bi bi-grid-3x3-gap"></i> Tous
+    </a>
+    <?php foreach ($allCategories as $cat): ?>
+        <a href="projects.php?category=<?php echo urlencode($cat); ?>" 
+           class="filter-btn <?php echo $selectedCategory === $cat ? 'active' : ''; ?>">
+            <?php echo htmlspecialchars($cat); ?>
+        </a>
+    <?php endforeach; ?>
+</div>
+
 <div class="projects-grid">
     <?php
-    $stmt = $pdo->query("SELECT * FROM projects ORDER BY created_at DESC");
+    // Build query based on filter
+    if (!empty($selectedCategory)) {
+        $stmt = $pdo->prepare("SELECT * FROM projects WHERE category LIKE ? ORDER BY created_at DESC");
+        $stmt->execute(['%' . $selectedCategory . '%']);
+    } else {
+        $stmt = $pdo->query("SELECT * FROM projects ORDER BY created_at DESC");
+    }
     
+    $projectCount = 0;
     while ($project = $stmt->fetch()) {
+        $projectCount++;
         // Get all images for this project
         $imgStmt = $pdo->prepare("SELECT image_path FROM project_images WHERE project_id = ? ORDER BY sort_order");
         $imgStmt->execute([$project['id']]);
@@ -73,6 +112,15 @@ include 'includes/db.php';
         echo '    </div>';
         
         echo '  </div>';
+        echo '</div>';
+    }
+    
+    // Show message if no projects found
+    if ($projectCount === 0) {
+        echo '<div class="no-projects-message">';
+        echo '  <i class="bi bi-folder-x"></i>';
+        echo '  <p>Aucun projet trouvé dans cette catégorie.</p>';
+        echo '  <a href="projects.php" class="btn-3d">Voir tous les projets</a>';
         echo '</div>';
     }
     ?>
