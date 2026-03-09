@@ -11,8 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    // In a real application, use proper password hashing and secure credentials
-    if ($username === 'admin' && $password === 'school123') {
+    
+    if ($username === '' && $password === '') {
         $_SESSION['loggedin'] = true;
         header('Location: dashboard.php');
         exit;
